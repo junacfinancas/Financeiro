@@ -72,6 +72,7 @@
   .btn.ouro { background: var(--amarelo); color: var(--noite); }
   .btn.link { background: none; color: var(--royal); padding: 8px; min-height: 0; }
   .btn.perigo { background: var(--sai-bg); color: var(--sai); }
+  .btn.link.apagar { color: var(--sai); }
   .btn.peq { padding: 7px 11px; min-height: 0; font-size: 13px; }
   .cheio { width: 100%; }
   .cheio + .cheio { margin-top: 8px; }
@@ -216,7 +217,21 @@
   .grafico.meses .g-bar { width: 28%; max-width: 12px; }
   .g-bar.a0 { background: #8fd0f0; } .g-bar.a1 { background: var(--cruz-azul); } .g-bar.a2 { background: var(--royal); }
   .rec-grid { display: grid; gap: 4px 28px; }
-  .rel-filtros { display: grid; gap: 4px; }
+  .filtros-rel { padding: 14px 16px 4px; }
+  .filtros-rel label.rel-ev { margin-bottom: 12px; }
+  .filtros-rel .rel-ev select { font-weight: 700; }
+  .periodo { margin-bottom: 12px; }
+  .per-modos { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--bg); border-radius: 12px; padding: 3px; margin: 6px 0 8px; }
+  .per-modos button { border: 0; background: none; padding: 8px 4px; border-radius: 9px; font-weight: 800; color: var(--muted); cursor: pointer; font-size: 13.5px; }
+  .per-modos button.ativo { background: var(--noite); color: var(--amarelo); }
+  .per-nav { display: flex; gap: 6px; align-items: center; }
+  .per-nav select { margin: 0; flex: 1; min-height: 44px; font-weight: 700; min-width: 0; }
+  .per-passo { flex: none; width: 44px; height: 44px; border-radius: 12px; border: 1.5px solid var(--campo); background: #fff; font-size: 22px; line-height: 1; cursor: pointer; color: var(--noite); }
+  .per-passo:disabled { opacity: .35; cursor: default; }
+  .per-tudo { margin: 4px 2px 0; color: var(--muted); font-weight: 700; }
+  .periodo .per-datas label { margin-bottom: 4px; }
+  .filtro-ativo { display: inline-flex; align-items: center; gap: 8px; background: var(--amarelo); color: var(--noite); border-radius: 999px; padding: 4px 6px 4px 12px; font-weight: 800; font-size: 13px; margin: 0 0 10px; }
+  .filtro-ativo button { border: 0; background: var(--noite); color: #fff; border-radius: 999px; width: 22px; height: 22px; cursor: pointer; font-size: 13px; line-height: 1; }
 
   /* ---------- Gráficos ---------- */
   .g-legenda { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--muted); font-weight: 700; margin: 0 0 6px; }
@@ -266,7 +281,13 @@
   .item { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; background: none; text-align: left;
     padding: 11px 8px; border-radius: 12px; cursor: pointer; }
   .item:hover { background: #f6f7fe; }
-  .item + .item { border-top: 1px solid var(--line); }
+  .item-wrap { display: flex; align-items: center; gap: 6px; }
+  .item-wrap + .item-wrap { border-top: 1px solid var(--line); }
+  .item-wrap > .item { flex: 1; min-width: 0; }
+  .item-olho { flex: none; width: 40px; height: 40px; margin-right: 4px; border: 1px solid var(--line); background: #fff; color: var(--royal);
+    border-radius: 12px; display: grid; place-items: center; cursor: pointer; padding: 0; }
+  .item-olho:hover { background: #f6f7fe; border-color: var(--royal); }
+  .item-olho svg { width: 20px; height: 20px; }
   .item-ico { flex: none; width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; font-size: 17px; }
   .item-ico.ent { background: var(--ent-bg); color: var(--ent); }
   .item-ico.sai { background: var(--sai-bg); color: var(--sai); }
@@ -366,6 +387,24 @@
   dl.det dt { color: var(--muted); font-weight: 600; }
   dl.det dd { margin: 0; word-break: break-word; font-weight: 700; }
   .cancel-box { background: var(--sai-bg); color: #7a1018; border-radius: 12px; padding: 10px 12px; font-size: 13.5px; margin-bottom: 14px; }
+  /* Visualizador de comprovantes (tela cheia, acima do detalhe) */
+  .visor { position: fixed; inset: 0; z-index: 55; background: rgba(12,13,40,.94); display: flex; flex-direction: column; }
+  .visor[hidden] { display: none; }
+  .visor-barra { display: flex; align-items: center; gap: 8px; padding: 10px 12px; padding-top: max(10px, env(safe-area-inset-top)); color: #fff; }
+  .visor-tit { flex: 1; min-width: 0; }
+  .visor-tit strong, .visor-tit small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .visor-tit small { opacity: .75; font-size: 12.5px; font-weight: 600; }
+  .visor-btn { flex: none; border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.08); color: #fff; border-radius: 12px;
+    padding: 9px 14px; font-weight: 800; font-size: 14px; cursor: pointer; text-decoration: none; }
+  .visor-btn:hover { background: rgba(255,255,255,.18); }
+  .visor-corpo { flex: 1; overflow: auto; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 6px 12px 28px;
+    -webkit-overflow-scrolling: touch; }
+  .visor-corpo.zoom { display: block; }
+  .visor-corpo img { max-width: 100%; max-height: calc(100vh - 96px); object-fit: contain; border-radius: 8px; background: #fff; cursor: zoom-in; }
+  .visor-corpo.zoom img { max-width: none; max-height: none; cursor: zoom-out; }
+  .visor-corpo canvas { width: 100%; max-width: 900px; height: auto; background: #fff; border-radius: 6px; box-shadow: 0 6px 20px rgba(0,0,0,.35); }
+  .visor-msg { color: #fff; text-align: center; margin: auto; display: grid; gap: 14px; justify-items: center; font-weight: 700; max-width: 420px; }
+  .visor-dica { color: rgba(255,255,255,.7); font-size: 12.5px; text-align: center; margin: 0; }
   .comp-img { width: 100%; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 8px; }
   .comp-area { margin-bottom: 12px; }
   .credencial { background: var(--bg); border-radius: 14px; padding: 14px; margin-bottom: 14px; display: grid; gap: 10px; }
@@ -446,10 +485,8 @@
     #form-novo > .linha2, #form-novo > #n-cat-wrap, #form-novo > #n-evento-wrap { grid-column: auto; }
     #form-novo > #n-salvar { max-width: 320px; justify-self: start; }
 
-    /* Relatórios */
-    .rel-filtros { grid-template-columns: auto 1fr; align-items: end; gap: 0 20px; }
-    .rel-filtros .linha2 { max-width: 420px; }
-    .rel-filtros .chips { margin-bottom: 14px; }
+    /* Relatórios: evento e período lado a lado */
+    .filtros-rel { display: grid; grid-template-columns: minmax(240px, 360px) minmax(0, 560px); gap: 0 24px; align-items: start; }
     #rel-corpo { display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 0 20px; align-items: start; }
     #rel-corpo > .largo { grid-column: 1 / -1; }
     .ev-colunas { columns: 2; column-gap: 32px; }
@@ -641,12 +678,11 @@
       <h2>Extrato</h2>
       <div class="ext-grid">
         <div class="ext-col ext-principal">
-          <div class="chips ext-chips" id="e-chips">
-        <button type="button" data-p="mes">Este mês</button>
-        <button type="button" data-p="ant">Mês passado</button>
-        <button type="button" data-p="ano">Este ano</button>
-        <button type="button" data-p="tudo">Tudo</button>
-      </div>
+          <div class="periodo ext-chips" id="e-per" data-de="e-de" data-ate="e-ate">
+            <div class="per-modos" role="group" aria-label="Tipo de período"><button type="button" data-per-modo="ano">Ano</button><button type="button" data-per-modo="mes">Mês</button><button type="button" data-per-modo="intervalo">Período</button><button type="button" data-per-modo="tudo">Tudo</button></div>
+            <div class="per-ctrl"></div>
+            <div class="linha2 per-datas" hidden><label>De<input type="date" id="e-de"></label><label>Até<input type="date" id="e-ate"></label></div>
+          </div>
           <div class="busca-linha ext-busca">
         <input id="e-busca" type="search" placeholder="Buscar descrição, valor, ID...">
         <button class="btn sec" id="e-btn-filtros" type="button">Filtros <span class="badge" id="e-qtd-filtros" hidden></span></button>
@@ -661,10 +697,6 @@
         <div class="ext-col ext-lateral">
         <div id="e-filtros" class="cartao" hidden>
         <h3 class="filtros-titulo">Filtros</h3>
-        <div class="linha2">
-          <label>De<input type="date" id="e-de"></label>
-          <label>Até<input type="date" id="e-ate"></label>
-        </div>
         <div class="linha2">
           <label>Tipo<select id="e-tipo"><option value="">Todos</option><option>Entrada</option><option>Saída</option><option>Transferência</option></select></label>
           <label>Categoria<select id="e-cat"></select></label>
@@ -689,26 +721,22 @@
     <!-- ===== RELATÓRIOS ===== -->
     <section class="view" id="v-relatorios" hidden>
       <h2>Relatórios</h2>
+      <div class="cartao filtros-rel">
+        <label class="rel-ev">Evento<select id="rel-evento"></select></label>
+        <div class="periodo" id="rel-per" data-de="rel-de" data-ate="rel-ate">
+          <span class="rotulo">Período</span>
+          <div class="per-modos" role="group" aria-label="Tipo de período"><button type="button" data-per-modo="ano">Ano</button><button type="button" data-per-modo="mes">Mês</button><button type="button" data-per-modo="intervalo">Período</button><button type="button" data-per-modo="tudo">Tudo</button></div>
+          <div class="per-ctrl"></div>
+          <div class="linha2 per-datas" hidden><label>De<input type="date" id="rel-de"></label><label>Até<input type="date" id="rel-ate"></label></div>
+        </div>
+      </div>
       <div class="chips" id="rel-secoes">
-        <button type="button" data-s="eventos">Por evento</button>
-        <button type="button" data-s="evento">Evento em detalhe</button>
+        <button type="button" data-s="eventos">Eventos</button>
         <button type="button" data-s="categorias">Por categoria</button>
         <button type="button" data-s="comparativo">Comparativo anual</button>
         <button type="button" data-s="saldo">Curva do saldo</button>
         <button type="button" data-s="mensal">Mês a mês</button>
         <button type="button" data-s="contas">Por conta</button>
-      </div>
-      <div class="rel-filtros">
-      <div class="chips" id="rel-periodo">
-        <button type="button" data-p="ano">Este ano</button>
-        <button type="button" data-p="ant">Ano passado</button>
-        <button type="button" data-p="12m">Últimos 12 meses</button>
-        <button type="button" data-p="tudo">Tudo</button>
-      </div>
-      <div class="linha2">
-        <label>De<input type="date" id="rel-de"></label>
-        <label>Até<input type="date" id="rel-ate"></label>
-      </div>
       </div>
       <div class="totais" id="rel-totais"></div>
       <div class="info-lista" id="rel-info"></div>
@@ -845,6 +873,14 @@
 </div>
 
 <div id="modal" class="modal" hidden><div class="modal-caixa" id="modal-corpo"></div></div>
+<div id="visor" class="visor" hidden role="dialog" aria-modal="true" aria-label="Comprovante">
+  <div class="visor-barra">
+    <div class="visor-tit"><strong id="visor-tit">Comprovante</strong><small id="visor-sub"></small></div>
+    <a class="visor-btn" id="visor-baixar" hidden>Baixar</a>
+    <button type="button" class="visor-btn" id="visor-fechar" aria-label="Fechar comprovante">✕</button>
+  </div>
+  <div class="visor-corpo" id="visor-corpo"></div>
+</div>
 <div id="toast" class="toast" hidden></div>
 
 <script>
@@ -951,15 +987,21 @@ function toast(msg) {
 }
 
 function abrirModal(html) { $('#modal-corpo').innerHTML = html; $('#modal').hidden = false; $('#modal-corpo').scrollTop = 0; }
-function fecharModal() { $('#modal').hidden = true; $('#modal-corpo').innerHTML = ''; }
+let aoFecharModal = null;
+function fecharModal() {
+  $('#modal').hidden = true; $('#modal-corpo').innerHTML = '';
+  const f = aoFecharModal; aoFecharModal = null;
+  if (f) f();
+}
 
 function confirmar(titulo, texto, botao, classe) {
   return new Promise(resolve => {
     abrirModal(`<h3>${esc(titulo)}</h3><p>${esc(texto)}</p>
       <button class="btn ${classe || 'pri'} cheio" id="cf-sim">${esc(botao)}</button>
       <button class="btn link cheio" id="cf-nao">Voltar</button>`);
-    $('#cf-sim').onclick = () => { fecharModal(); resolve(true); };
-    $('#cf-nao').onclick = () => { fecharModal(); resolve(false); };
+    aoFecharModal = () => resolve(false);   // fechar pelo fundo ou pelo Esc = "Voltar"
+    $('#cf-sim').onclick = () => { aoFecharModal = null; fecharModal(); resolve(true); };
+    $('#cf-nao').onclick = () => { fecharModal(); };
   });
 }
 
@@ -1060,7 +1102,7 @@ function irPara(v, opcoes = {}) {
   if (v === 'inicio') atualizarResumo();
   if (v === 'extrato') carregarExtrato();
   if (v === 'admin') carregarAdmin();
-  if (v === 'relatorios') { if (REL.secao === 'evento' || REL.secao === 'saldo') renderRel(); else carregarRelatorio(); }
+  if (v === 'relatorios') { if (REL.secao === 'saldo') renderRel(); else carregarRelatorio(); }
   if (v === 'projecoes') carregarProjecoes();
   requestAnimationFrame(() => desenharGraficos($('#v-' + v)));
 }
@@ -1096,7 +1138,9 @@ async function fazerLogin(ev) {
 
 function encerrarSessao() {
   S.token = null; S.usuario = null; S.carregado = false; S.cache = {};
+  VISOR.cache = {}; VISOR.ordem = [];
   guardar('fin_token', null);
+  fecharVisor();
   fecharModal();
 }
 
@@ -1144,8 +1188,11 @@ async function salvarTroca(ev) {
  *  CARREGAMENTO E RESUMO
  * ============================================================ */
 async function carregarApp() {
+  const jaCarregado = S.carregado;
   mostrarTela('carregando');
-  const d = await api('getInicial', S.token);
+  let d;
+  try { d = await api('getInicial', S.token); }
+  catch (e) { if (!e.tratado) mostrarTela(jaCarregado ? 'app' : 'login'); throw e; }
   S.usuario = d.usuario; S.nomeGrupo = d.nomeGrupo; S.categorias = d.categorias; S.eventos = d.eventos;
   S.contas = d.contas; S.formas = d.formas; S.hoje = d.hoje; S.carregado = true;
   guardar('fin_grupo', d.nomeGrupo);
@@ -1159,8 +1206,8 @@ async function carregarApp() {
   preencherCategorias();
   preencherContas();
   limparNovo('Saída');
-  definirPeriodo('mes', false);
-  periodoRel('ano', false);
+  iniciarPeriodo('e-per', 'mes', carregarExtrato);
+  iniciarPeriodo('rel-per', 'ano', () => { REL.dados = null; carregarRelatorio(); });
   invalidarRelatorios();
   renderResumo(d.resumo);
   mostrarTela('app');
@@ -1299,8 +1346,7 @@ function verEventoNoExtrato(ev) {
   $('#e-tipo').value = ''; $('#e-cat').value = ''; $('#e-comp').value = ''; $('#e-status').value = 'ativos';
   $('#e-conta').value = ''; $('#e-busca').value = '';
   $('#e-evento').value = ev;
-  $$('#e-chips button').forEach(b => b.classList.toggle('ativo', b.dataset.p === 'tudo'));
-  $('#e-de').value = ''; $('#e-ate').value = '';
+  definirPeriodo('tudo', false);
   irPara('extrato');
 }
 
@@ -1308,15 +1354,18 @@ function itemHTML(l) {
   const ent = l.tipo === 'Entrada', trf = l.tipo === 'Transferência';
   const extra = l.status === 'Cancelado' ? ' · cancelado'
     : l.resumo ? ' · resumo'
-    : (l.tipo === 'Saída' && !l.temComprovante && !l.historico ? ' · <em class="sem">sem comprovante</em>' : (l.temComprovante ? ' · 📎' : ''));
+    : (l.tipo === 'Saída' && !l.temComprovante && !l.historico ? ' · <em class="sem">sem comprovante</em>' : '');
   const sub = trf ? `${esc(l.conta)} → ${esc(l.contaDestino)}` : esc(l.categoria);
   const cls = trf ? 'trf' : ent ? 'ent' : 'sai';
-  return `<button type="button" class="item ${l.status === 'Cancelado' ? 'cancelado' : ''}" data-id="${esc(l.id)}">
+  const olho = l.temComprovante
+    ? `<button type="button" class="item-olho" data-ver="${esc(l.id)}" aria-label="Ver comprovante" title="Ver comprovante">${ICONE_OLHO}</button>` : '';
+  return `<div class="item-wrap"><button type="button" class="item ${l.status === 'Cancelado' ? 'cancelado' : ''}" data-id="${esc(l.id)}">
     <span class="item-ico ${cls}">${trf ? '⇄' : ent ? '↑' : '↓'}</span>
     <span class="item-txt"><strong>${esc(l.descricao)}</strong><small>${sub} · ${esc(l.dataBR)}${extra}</small></span>
     <span class="item-valor c-${cls}">${trf ? '' : ent ? '+ ' : '− '}${fmtBRL(l.valor)}</span>
-  </button>`;
+  </button>${olho}</div>`;
 }
+const ICONE_OLHO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
 
 /* ============================================================
  *  NOVO LANÇAMENTO
@@ -1343,6 +1392,10 @@ function preencherEventos() {
   const selF = $('#e-evento'), atualF = selF.value;
   opcoesEventos(selF, true);
   if ([...selF.options].some(o => o.value === atualF)) selF.value = atualF;
+  const selR = $('#rel-evento');
+  opcoesEventos(selR, true);
+  selR.options[0].textContent = 'Todos os eventos';
+  selR.value = REL.evento && [...selR.options].some(o => o.value === REL.evento) ? REL.evento : '';
 }
 
 function preencherContas() {
@@ -1466,10 +1519,12 @@ async function salvarNovo(ev) {
     const ok = await confirmar('Salvar sem comprovante?', 'Sem problema: o lançamento fica marcado como pendente e você anexa o comprovante depois, abrindo o lançamento no extrato.', 'Salvar sem comprovante');
     if (!ok) return;
   }
+  d.chave = chaveDoEnvio('chaveNovo', d);
   const btn = $('#n-salvar');
   ocupado(btn, true, d.arquivo ? 'Enviando comprovante...' : 'Salvando...');
   try {
     const r = await api('salvarLancamento', S.token, d);
+    S.chaveNovo = null;
     if (!trf) guardar('fin_conta', d.conta);
     const eventoUsado = d.evento;
     renderResumo(r.resumo);
@@ -1477,10 +1532,35 @@ async function salvarNovo(ev) {
     // mantém o evento para lançamentos em sequência
     $('#n-evento').value = eventoUsado;
     invalidarRelatorios();
-    toast(`Lançamento ${r.id} salvo ✓`);
+    toast(r.repetido ? `O lançamento ${r.id} já estava salvo ✓ (não foi duplicado)` : `Lançamento ${r.id} salvo ✓`);
     irPara('inicio', { semRecarregar: true });
-  } catch (e) { mostrarErro('#n-erro', e); }
+    if (r.aviso) mostrarAviso(r.aviso);
+  } catch (e) {
+    if (!e.tratado && falhaDeConexao(e)) {
+      $('#n-erro').textContent = 'Não deu para confirmar se o lançamento foi salvo, porque a conexão falhou. ' +
+        'Confira a internet e toque em salvar de novo: se ele já tiver sido gravado, o app reconhece e não duplica.';
+    } else mostrarErro('#n-erro', e);
+  }
   finally { ocupado(btn, false); }
+}
+
+// Identificador do envio: o mesmo enquanto o formulário não mudar. Se a resposta se perder e a pessoa
+// tentar de novo, o servidor reconhece o identificador e não grava duas vezes.
+function chaveDoEnvio(slot, d) {
+  const assin = JSON.stringify(d, (k, v) => k === 'chave' ? undefined : (k === 'base64' ? String(v).length + ':' + String(v).slice(-64) : v));
+  if (!S[slot] || S[slot].assin !== assin) S[slot] = { assin: assin, chave: novaChave() };
+  return S[slot].chave;
+}
+function novaChave() {
+  try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}
+  return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12) + '-' + Math.random().toString(36).slice(2, 12);
+}
+function falhaDeConexao(e) {
+  return /sem conex|n[aã]o respondeu como esperado|network|failed to fetch|http 0|connection/i.test(String(e && e.message));
+}
+function mostrarAviso(texto) {
+  abrirModal(`<h3>Atenção</h3><p>${esc(texto)}</p>
+    <button type="button" class="btn pri cheio" data-fechar>Entendi</button>`);
 }
 
 function novoEventoRapido() {
@@ -1508,18 +1588,82 @@ function novoEventoRapido() {
 /* ============================================================
  *  EXTRATO
  * ============================================================ */
+// Atalhos do Extrato: 'mes' (este mês), 'ant' (mês passado), 'ano' (este ano), 'tudo'
 function definirPeriodo(p, recarregar = true) {
-  $$('#e-chips button').forEach(b => b.classList.toggle('ativo', b.dataset.p === p));
+  const st = PER['e-per'];
   const [a, m] = S.hoje.split('-').map(Number);
-  const ultimoDia = (ano, mes) => new Date(ano, mes, 0).getDate();
-  let de = '', ate = '';
-  if (p === 'mes') { de = `${a}-${pad(m)}-01`; ate = `${a}-${pad(m)}-${ultimoDia(a, m)}`; }
-  else if (p === 'ant') {
-    const mm = m === 1 ? 12 : m - 1, aa = m === 1 ? a - 1 : a;
-    de = `${aa}-${pad(mm)}-01`; ate = `${aa}-${pad(mm)}-${ultimoDia(aa, mm)}`;
-  } else if (p === 'ano') { de = `${a}-01-01`; ate = `${a}-12-31`; }
-  $('#e-de').value = de; $('#e-ate').value = ate;
-  if (recarregar) carregarExtrato();
+  st.ano = a; st.mes = m;
+  if (p === 'ant') { st.modo = 'mes'; st.mes = m === 1 ? 12 : m - 1; st.ano = m === 1 ? a - 1 : a; }
+  else st.modo = p === 'mes' ? 'mes' : p === 'ano' ? 'ano' : 'tudo';
+  aplicarPeriodo('e-per', recarregar);
+}
+
+/* ----- Filtro de período (Ano, Mês, Período entre datas ou Tudo) -----
+ * Usado no Extrato e nos Relatórios. Escreve as datas nos campos De e Até
+ * de cada tela, que continuam sendo a referência para as consultas. */
+const PER = {};
+function iniciarPeriodo(id, modo, aoMudar) {
+  const el = $('#' + id);
+  const [a, m] = S.hoje.split('-').map(Number);
+  PER[id] = { el: el, modo: modo, ano: a, mes: m, aoMudar: aoMudar, de: $('#' + el.dataset.de), ate: $('#' + el.dataset.ate) };
+  aplicarPeriodo(id, false);
+}
+function anosPeriodo() {
+  const anos = new Set(((S.resumo && S.resumo.anos) || []).map(x => Number(x.ano)));
+  anos.add(Number(S.hoje.slice(0, 4)));
+  Object.values(PER).forEach(p => anos.add(p.ano));
+  return [...anos].sort((x, y) => y - x);
+}
+function aplicarPeriodo(id, avisar = true) {
+  const p = PER[id];
+  const ultimo = (a, m) => new Date(a, m, 0).getDate();
+  if (p.modo === 'ano') { p.de.value = `${p.ano}-01-01`; p.ate.value = `${p.ano}-12-31`; }
+  else if (p.modo === 'mes') { p.de.value = `${p.ano}-${pad(p.mes)}-01`; p.ate.value = `${p.ano}-${pad(p.mes)}-${ultimo(p.ano, p.mes)}`; }
+  else if (p.modo === 'tudo') { p.de.value = ''; p.ate.value = ''; }
+  renderPeriodo(id);
+  if (avisar && p.aoMudar) p.aoMudar();
+}
+function renderPeriodo(id) {
+  const p = PER[id], el = p.el;
+  const [aH, mH] = S.hoje.split('-').map(Number);
+  $$('.per-modos button', el).forEach(b => b.classList.toggle('ativo', b.dataset.perModo === p.modo));
+  $('.per-datas', el).hidden = p.modo !== 'intervalo';
+  const selAno = `<select class="per-ano" aria-label="Ano">${anosPeriodo().map(a => `<option value="${a}"${a === p.ano ? ' selected' : ''}>${a}</option>`).join('')}</select>`;
+  const noFim = p.modo === 'ano' ? p.ano >= aH : (p.ano > aH || (p.ano === aH && p.mes >= mH));
+  const nav = meio => `<div class="per-nav"><button type="button" class="per-passo" data-per-passo="-1" aria-label="Anterior">‹</button>${meio}<button type="button" class="per-passo" data-per-passo="1" aria-label="Próximo"${noFim ? ' disabled' : ''}>›</button></div>`;
+  $('.per-ctrl', el).innerHTML = p.modo === 'ano' ? nav(selAno)
+    : p.modo === 'mes' ? nav(`<select class="per-mes" aria-label="Mês">${MESES_NOME.map((n, i) => `<option value="${i + 1}"${i + 1 === p.mes ? ' selected' : ''}>${n}</option>`).join('')}</select>${selAno}`)
+    : p.modo === 'tudo' ? '<p class="per-tudo">Todo o histórico</p>' : '';
+}
+function descricaoPeriodo(id) {
+  const p = PER[id];
+  if (!p) return '';
+  if (p.modo === 'ano') return String(p.ano);
+  if (p.modo === 'mes') return `${MESES_NOME[p.mes - 1]} de ${p.ano}`;
+  if (p.modo === 'tudo' || (!p.de.value && !p.ate.value)) return 'Todo o histórico';
+  const br = iso => iso ? `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}` : '';
+  return `${br(p.de.value) || 'início'} a ${br(p.ate.value) || 'hoje'}`;
+}
+function eventoPeriodo(ev) {
+  const caixa = ev.target.closest('.periodo');
+  if (!caixa || !PER[caixa.id]) return false;
+  const p = PER[caixa.id];
+  if (ev.type === 'click') {
+    const modo = ev.target.closest('[data-per-modo]');
+    const passo = ev.target.closest('[data-per-passo]');
+    if (modo) { p.modo = modo.dataset.perModo; aplicarPeriodo(caixa.id); return true; }
+    if (passo && !passo.disabled) {
+      const d = Number(passo.dataset.perPasso);
+      if (p.modo === 'ano') p.ano += d;
+      else { p.mes += d; if (p.mes < 1) { p.mes = 12; p.ano--; } if (p.mes > 12) { p.mes = 1; p.ano++; } }
+      aplicarPeriodo(caixa.id); return true;
+    }
+    return false;
+  }
+  if (ev.target.matches('.per-ano')) { p.ano = Number(ev.target.value); aplicarPeriodo(caixa.id); return true; }
+  if (ev.target.matches('.per-mes')) { p.mes = Number(ev.target.value); aplicarPeriodo(caixa.id); return true; }
+  if (ev.target.matches('.per-datas input') && p.modo === 'intervalo') { if (p.aoMudar) p.aoMudar(); return true; }
+  return false;
 }
 
 function filtrosAtuais() {
@@ -1547,15 +1691,14 @@ async function carregarExtrato() {
     const r = await api('listarLancamentos', S.token, filtrosAtuais());
     if (minha !== reqExtrato) return;
     r.itens.forEach(l => { S.cache[l.id] = l; });
-    S.extrato = { itens: r.itens, mostrados: 0 };
+    S.extrato = { itens: r.itens, mostrados: 0, total: r.total, filtros: filtrosAtuais(), req: minha };
     const res = r.entradas - r.saidas;
     $('#e-totais').innerHTML = `
       <div><span>Entradas</span><strong class="c-ent">${fmtBRL(r.entradas)}</strong></div>
       <div><span>Saídas</span><strong class="c-sai">${fmtBRL(r.saidas)}</strong></div>
       <div><span>Resultado</span><strong class="${res > 0 ? 'c-ent' : res < 0 ? 'c-sai' : ''}">${fmtBRL(res)}</strong></div>`;
     $('#e-info').textContent = `${r.total} lançamento${r.total === 1 ? '' : 's'}` +
-      (r.transferencias ? ` · ${fmtBRL(r.transferencias)} em transferências entre contas (fora dos totais)` : '') +
-      (r.limitado ? ' · mostrando os 500 mais recentes, use os filtros para refinar' : '');
+      (r.transferencias ? ` · ${fmtBRL(r.transferencias)} em transferências entre contas (fora dos totais)` : '');
     $('#e-lista').innerHTML = '';
     mostrarMais();
   } catch (e) {
@@ -1563,23 +1706,36 @@ async function carregarExtrato() {
   }
 }
 
-function mostrarMais() {
-  const { itens, mostrados } = S.extrato;
-  if (!itens.length) {
+async function mostrarMais() {
+  const ex = S.extrato;
+  if (!ex.itens.length) {
     $('#e-lista').innerHTML = '<div class="vazio">Nenhum lançamento encontrado com esses filtros.</div>';
     $('#e-mais').hidden = true;
     return;
   }
-  const prox = itens.slice(mostrados, mostrados + POR_PAGINA);
+  // Já mostrou tudo o que veio do servidor, mas há mais: busca a próxima página
+  if (ex.mostrados >= ex.itens.length && ex.itens.length < ex.total) {
+    const btn = $('#e-mais');
+    ocupado(btn, true, 'Carregando...');
+    try {
+      const r = await api('listarLancamentos', S.token, Object.assign({}, ex.filtros, { inicio: ex.itens.length }));
+      if (ex.req !== reqExtrato) return;
+      const vistos = new Set(ex.itens.map(l => l.id));
+      const novos = r.itens.filter(l => !vistos.has(l.id));
+      novos.forEach(l => { S.cache[l.id] = l; });
+      ex.itens = ex.itens.concat(novos);
+      ex.total = novos.length ? r.total : ex.itens.length;
+    } catch (e) { avisarErro(e); return; }
+    finally { ocupado(btn, false); }
+  }
+  const prox = ex.itens.slice(ex.mostrados, ex.mostrados + POR_PAGINA);
   $('#e-lista').insertAdjacentHTML('beforeend', prox.map(itemHTML).join(''));
-  S.extrato.mostrados += prox.length;
-  $('#e-mais').hidden = S.extrato.mostrados >= itens.length;
+  ex.mostrados += prox.length;
+  $('#e-mais').hidden = ex.mostrados >= Math.max(ex.total, ex.itens.length);
 }
 
 function verSemComprovante() {
-  $$('#e-chips button').forEach(b => b.classList.remove('ativo'));
-  $$('#e-chips button[data-p="tudo"]').forEach(b => b.classList.add('ativo'));
-  $('#e-de').value = ''; $('#e-ate').value = '';
+  definirPeriodo('tudo', false);
   $('#e-tipo').value = 'Saída'; $('#e-comp').value = 'sem'; $('#e-status').value = 'ativos';
   $('#e-cat').value = ''; $('#e-busca').value = ''; $('#e-evento').value = ''; $('#e-conta').value = '';
   irPara('extrato');
@@ -1622,28 +1778,130 @@ function abrirDetalhe(id) {
     </dl>
     <div class="comp-area" id="det-comp">${comp}</div>
     ${podeCancelar ? '<button type="button" class="btn perigo cheio" id="det-cancelar">Cancelar lançamento</button>' : ''}
+    ${ehAdmin() ? '<button type="button" class="btn link cheio apagar" id="det-apagar">Apagar definitivamente</button>' : ''}
     <button type="button" class="btn link cheio" data-fechar>Fechar</button>`);
 
   const ver = $('#det-ver');
-  if (ver) ver.onclick = () => verComprovante(l.id, ver);
+  if (ver) ver.onclick = () => abrirVisor(l.id);
   $$('.det-arq').forEach(inp => { inp.onchange = () => anexarDepois(l.id, inp); });
+  const apagar = $('#det-apagar');
+  if (apagar) apagar.onclick = () => pedirApagamento(l.id);
   const canc = $('#det-cancelar');
   if (canc) canc.onclick = () => pedirCancelamento(l.id);
 }
 
-async function verComprovante(id, btn) {
-  ocupado(btn, true, 'Carregando...');
-  try {
-    const c = await api('getComprovante', S.token, id);
-    const area = $('#det-comp');
-    if (!area) return;
-    if (c.mime.indexOf('image/') === 0) {
-      area.innerHTML = `<img class="comp-img" src="data:${c.mime};base64,${c.base64}" alt="Comprovante">`;
-    } else {
-      const url = URL.createObjectURL(b64ParaBlob(c.base64, c.mime));
-      area.innerHTML = `<a class="btn sec cheio" href="${url}" download="${esc(c.nome)}" target="_blank">Abrir PDF do comprovante</a>`;
-    }
-  } catch (e) { avisarErro(e); ocupado(btn, false); }
+/* ----- Visualizador de comprovantes ----- */
+const VISOR = { cache: {}, ordem: [], atual: null, pdfjs: null, url: null };
+// pdf.js (leitor de PDF) só é baixado na primeira vez que alguém abre um PDF.
+function basePdfJs() { return window.JUNAC_PDFJS_BASE || ('https:' + '/' + '/cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/'); }
+function carregarPdfJs() {
+  if (VISOR.pdfjs) return VISOR.pdfjs;
+  VISOR.pdfjs = new Promise((resolve, reject) => {
+    if (window.pdfjsLib) { resolve(window.pdfjsLib); return; }
+    const s = document.createElement('script');
+    s.src = basePdfJs() + 'pdf.min.js';
+    s.onload = () => {
+      const lib = window.pdfjsLib;
+      if (!lib) { reject(new Error('Leitor de PDF indisponível.')); return; }
+      lib.GlobalWorkerOptions.workerSrc = basePdfJs() + 'pdf.worker.min.js';
+      resolve(lib);
+    };
+    s.onerror = () => reject(new Error('Não foi possível carregar o leitor de PDF.'));
+    document.head.appendChild(s);
+  }).catch(e => { VISOR.pdfjs = null; throw e; });
+  return VISOR.pdfjs;
+}
+
+async function buscarComprovante(id) {
+  if (VISOR.cache[id]) return VISOR.cache[id];
+  const c = await api('getComprovante', S.token, id);
+  VISOR.cache[id] = c; VISOR.ordem.push(id);
+  while (VISOR.ordem.length > 8) delete VISOR.cache[VISOR.ordem.shift()];  // guarda só os últimos 8 na memória
+  return c;
+}
+
+function fecharVisor() {
+  $('#visor').hidden = true;
+  $('#visor-corpo').innerHTML = '';
+  VISOR.atual = null;
+  if (VISOR.url) { URL.revokeObjectURL(VISOR.url); VISOR.url = null; }
+}
+
+function visorMensagem(texto, comBaixar) {
+  const b = $('#visor-baixar');
+  $('#visor-corpo').classList.remove('zoom');
+  $('#visor-corpo').innerHTML = `<div class="visor-msg"><span>${esc(texto)}</span>` +
+    (comBaixar && !b.hidden ? `<a class="visor-btn" href="${b.href}" download="${esc(b.download)}" target="_blank">Baixar o arquivo</a>` : '') + '</div>';
+}
+
+async function abrirVisor(id) {
+  const l = S.cache[id];
+  const marca = id + ':' + Date.now();
+  VISOR.atual = marca;
+  if (VISOR.url) { URL.revokeObjectURL(VISOR.url); VISOR.url = null; }
+  $('#visor-tit').textContent = l ? l.descricao : 'Comprovante';
+  $('#visor-sub').textContent = l ? `${fmtBRL(l.valor)} · ${l.dataBR} · ${l.id}` : id;
+  const baixar = $('#visor-baixar');
+  baixar.hidden = true;
+  const corpo = $('#visor-corpo');
+  corpo.classList.remove('zoom');
+  corpo.innerHTML = '<div class="visor-msg"><div class="spinner"></div><span>Carregando comprovante...</span></div>';
+  $('#visor').hidden = false;
+  let c;
+  try { c = await buscarComprovante(id); }
+  catch (e) {
+    if (VISOR.atual !== marca) return;
+    if (e.tratado) { fecharVisor(); return; }
+    visorMensagem(e.message, false);
+    return;
+  }
+  if (VISOR.atual !== marca) return;
+  VISOR.url = URL.createObjectURL(b64ParaBlob(c.base64, c.mime));
+  baixar.href = VISOR.url; baixar.download = c.nome; baixar.target = '_blank'; baixar.hidden = false;
+
+  if (c.mime.indexOf('image/') === 0) {
+    corpo.innerHTML = '<img alt="Comprovante">';
+    const img = corpo.querySelector('img');
+    img.onerror = () => { if (VISOR.atual === marca) visorMensagem('Este formato de imagem não pode ser mostrado aqui (fotos HEIC do iPhone, por exemplo).', true); };
+    img.onload = () => {
+      if (VISOR.atual === marca && !corpo.querySelector('.visor-dica')) corpo.insertAdjacentHTML('beforeend', '<p class="visor-dica">Toque na imagem para ampliar</p>');
+    };
+    img.onclick = () => corpo.classList.toggle('zoom');
+    img.src = `data:${c.mime};base64,${c.base64}`;
+  } else if (c.mime === 'application/pdf') {
+    try { await desenharPdf(c, marca); }
+    catch (e) { if (VISOR.atual === marca) visorMensagem('Não foi possível mostrar o PDF aqui.', true); }
+  } else {
+    visorMensagem('Este tipo de arquivo não pode ser mostrado aqui.', true);
+  }
+}
+
+async function desenharPdf(c, marca) {
+  const lib = await carregarPdfJs();
+  const bin = atob(c.base64); const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const doc = await lib.getDocument({ data: bytes }).promise;
+  if (VISOR.atual !== marca) return;
+  const corpo = $('#visor-corpo');
+  corpo.innerHTML = '';
+  const largura = Math.max(280, Math.min(corpo.clientWidth - 24, 900));
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const MAX_PAGINAS = 20;
+  const n = Math.min(doc.numPages, MAX_PAGINAS);
+  for (let i = 1; i <= n; i++) {
+    const pg = await doc.getPage(i);
+    if (VISOR.atual !== marca) return;
+    const vp = pg.getViewport({ scale: largura / pg.getViewport({ scale: 1 }).width * dpr });
+    const cv = document.createElement('canvas');
+    cv.width = Math.floor(vp.width); cv.height = Math.floor(vp.height);
+    cv.setAttribute('aria-label', `Página ${i} de ${doc.numPages}`);
+    corpo.appendChild(cv);
+    await pg.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise;
+  }
+  if (VISOR.atual !== marca) return;
+  corpo.insertAdjacentHTML('beforeend', doc.numPages > n
+    ? `<p class="visor-dica">Mostrando ${n} de ${doc.numPages} páginas. Use "Baixar" para ver o arquivo completo.</p>`
+    : `<p class="visor-dica">${doc.numPages} página${doc.numPages === 1 ? '' : 's'}</p>`);
 }
 
 async function anexarDepois(id, input) {
@@ -1659,6 +1917,37 @@ async function anexarDepois(id, input) {
     toast('Comprovante anexado ✓');
     abrirDetalhe(id);
   } catch (e) { avisarErro(e); abrirDetalhe(id); }
+}
+
+function pedirApagamento(id) {
+  const l = S.cache[id];
+  abrirModal(`<h3>Apagar lançamento</h3>
+    <p>${esc(l.descricao)} · <strong>${fmtBRL(l.valor)}</strong> · ${esc(l.dataBR)} · ${esc(l.id)}</p>
+    <div class="cancel-box">O lançamento sai da planilha de vez e deixa de contar em todos os saldos e relatórios.
+      Use para testes ou lançamentos feitos por engano. Para corrigir um lançamento real, prefira <strong>Cancelar</strong>, que mantém o histórico.
+      ${l.temComprovante ? '<br><br>O comprovante vai para a lixeira do Drive (dá para recuperar por 30 dias).' : ''}
+      <br><br>Uma cópia dos dados fica registrada na aba Historico da planilha.</div>
+    <label>Motivo<input id="ap-motivo" maxlength="200" placeholder="Ex.: lançamento de teste"></label>
+    <p class="erro" id="ap-erro"></p>
+    <button type="button" class="btn sai cheio" id="ap-ok">Apagar definitivamente</button>
+    <button type="button" class="btn link cheio" id="ap-voltar">Voltar</button>`);
+  setTimeout(() => $('#ap-motivo').focus(), 50);
+  $('#ap-voltar').onclick = () => abrirDetalhe(id);
+  $('#ap-ok').onclick = async () => {
+    const motivo = $('#ap-motivo').value.trim();
+    if (motivo.length < 3) { $('#ap-erro').textContent = 'Informe o motivo (ex.: lançamento de teste).'; return; }
+    const btn = $('#ap-ok');
+    ocupado(btn, true, 'Apagando...');
+    try {
+      const r = await api('apagarLancamento', S.token, id, motivo);
+      delete S.cache[id]; delete VISOR.cache[id];
+      renderResumo(r.resumo);
+      invalidarRelatorios();
+      if (!$('#v-extrato').hidden) carregarExtrato();
+      fecharModal();
+      toast(`Lançamento ${r.id} apagado.`);
+    } catch (e) { mostrarErro('#ap-erro', e); ocupado(btn, false); }
+  };
 }
 
 function pedirCancelamento(id) {
@@ -1852,26 +2141,20 @@ function invalidarRelatorios() {
   if (typeof PROJ !== 'undefined') PROJ.dados = null;
 }
 
+// Atalhos dos Relatórios: 'ano' (este ano), 'ant' (ano passado), 'tudo'
 function periodoRel(p, recarregar = true) {
-  $$('#rel-periodo button').forEach(b => b.classList.toggle('ativo', b.dataset.p === p));
-  const [a, m, d] = S.hoje.split('-').map(Number);
-  let de = '', ate = '';
-  if (p === 'ano') { de = `${a}-01-01`; ate = `${a}-12-31`; }
-  else if (p === 'ant') { de = `${a - 1}-01-01`; ate = `${a - 1}-12-31`; }
-  else if (p === '12m') {
-    const ini = new Date(a - 1, m - 1, d + 1);
-    de = `${ini.getFullYear()}-${pad(ini.getMonth() + 1)}-${pad(ini.getDate())}`; ate = S.hoje;
-  }
-  $('#rel-de').value = de; $('#rel-ate').value = ate;
-  if (recarregar) carregarRelatorio();
+  const st = PER['rel-per'];
+  st.ano = Number(S.hoje.slice(0, 4)) - (p === 'ant' ? 1 : 0);
+  st.modo = p === 'tudo' ? 'tudo' : 'ano';
+  aplicarPeriodo('rel-per', recarregar);
 }
 
 let reqRel = 0;
 async function carregarRelatorio() {
   const minha = ++reqRel;
-  if (REL.secao !== 'evento' && REL.secao !== 'saldo') $('#rel-corpo').innerHTML = '<div class="vazio largo"><div class="spinner peq"></div></div>';
+  if (REL.secao !== 'saldo' && !(REL.secao === 'eventos' && REL.evento)) $('#rel-corpo').innerHTML = '<div class="vazio largo"><div class="spinner peq"></div></div>';
   try {
-    const r = await api('relatorio', S.token, { de: $('#rel-de').value, ate: $('#rel-ate').value });
+    const r = await api('relatorio', S.token, { de: $('#rel-de').value, ate: $('#rel-ate').value, evento: REL.evento });
     if (minha !== reqRel) return;
     REL.dados = r;
     renderRel();
@@ -1905,35 +2188,55 @@ function crescimentoMedio(pontos) {
 }
 
 function renderRel() {
+  if (REL.secao === 'evento') REL.secao = 'eventos';
   $$('#rel-secoes button').forEach(b => b.classList.toggle('ativo', b.dataset.s === REL.secao));
-  const proprio = REL.secao === 'evento' || REL.secao === 'saldo';
-  const comp = REL.secao === 'comparativo';
-  $('.rel-filtros').hidden = proprio || comp;
-  $('#rel-totais').hidden = proprio || comp;
-  $('#rel-info').hidden = proprio;
-  if (REL.secao === 'evento') { relEventoDetalhe(); return; }
-  if (REL.secao === 'saldo') { relCurvaSaldo(); return; }
+  $('#rel-secoes button[data-s="eventos"]').textContent = REL.evento ? 'Painel do evento' : 'Eventos';
+  const sec = REL.secao, comp = sec === 'comparativo';
+  const nomeEv = REL.evento ? (REL.evento === SEM_EVENTO ? 'Dia a dia do grupo (sem evento)' : REL.evento) : '';
+  if (sec === 'saldo') {
+    $('#rel-totais').hidden = true;
+    $('#rel-info').hidden = false;
+    $('#rel-info').textContent = 'A curva do saldo mostra o caixa do grupo inteiro, mês a mês, desde o início. Os filtros de evento e período não se aplicam a ela.';
+    relCurvaSaldo(); return;
+  }
   const r = REL.dados;
   if (!r) { carregarRelatorio(); return; }
+  if (sec === 'eventos' && REL.evento) {
+    $('#rel-totais').hidden = true; $('#rel-info').hidden = true;
+    relEventoDetalhe(); return;
+  }
   const t = r.totais, res = t.entradas - t.saidas;
+  $('#rel-totais').hidden = comp;
+  $('#rel-info').hidden = false;
   $('#rel-totais').innerHTML = `
     <div><span>Entradas</span><strong class="c-ent">${fmtBRL(t.entradas)}</strong></div>
     <div><span>Saídas</span><strong class="c-sai">${fmtBRL(t.saidas)}</strong></div>
     <div><span>Resultado</span><strong class="${corRes(res)}">${fmtBRL(res)}</strong></div>`;
   $('#rel-info').textContent = comp
-    ? 'O comparativo usa todos os anos registrados, independente do período. Transferências entre contas não entram.'
-    : (r.periodo.de || r.periodo.ate ? `${r.periodo.de || 'início'} a ${r.periodo.ate || 'hoje'}` : 'Todo o histórico') +
-      ` · ${t.qtd} lançamento${t.qtd === 1 ? '' : 's'} · transferências entre contas não entram nos totais`;
+    ? (r.baseComparativo ? `Comparando as edições de ${r.baseComparativo}, ano a ano, em todo o histórico (o filtro de período não se aplica).`
+      : REL.evento === SEM_EVENTO ? 'Comparando os gastos do dia a dia (sem evento), ano a ano, em todo o histórico.'
+      : 'O comparativo usa todos os anos registrados (o filtro de período não se aplica). Transferências entre contas não entram.')
+    : [nomeEv, descricaoPeriodo('rel-per'), `${t.qtd} lançamento${t.qtd === 1 ? '' : 's'}`].filter(Boolean).join(' · ') +
+      (REL.evento ? '' : ' · transferências entre contas não entram nos totais');
   const secoes = { eventos: relEventos, categorias: relCategorias, comparativo: relComparativo, mensal: relMensal, contas: relContas };
-  $('#rel-corpo').innerHTML = secoes[REL.secao](r);
+  $('#rel-corpo').innerHTML = secoes[sec](r);
   desenharGraficos($('#rel-corpo'));
 }
 
+function escolherEventoRel(ev) {
+  REL.evento = ev || '';
+  const sel = $('#rel-evento');
+  if (sel.value !== REL.evento) sel.value = REL.evento;
+  // Um evento acontece em datas próprias: ao escolher um, o período passa para "Tudo"
+  if (REL.evento && REL.evento !== SEM_EVENTO && PER['rel-per'].modo !== 'tudo') { PER['rel-per'].modo = 'tudo'; aplicarPeriodo('rel-per', false); }
+  REL.dados = null;
+  carregarRelatorio();
+}
+
 function abrirEventoDetalhe(ev) {
-  REL.secao = 'evento';
-  REL.evento = ev;
+  REL.secao = 'eventos';
   if ($('#v-relatorios').hidden) irPara('relatorios', { semRecarregar: true });
-  renderRel();
+  escolherEventoRel(ev);
 }
 
 function relEventos(r) {
@@ -1948,16 +2251,19 @@ function relEventos(r) {
         <span><span class="c-ent">+${fmtBRL(e.entradas)}</span> · <span class="c-sai">−${fmtBRL(e.saidas)}</span></span></div>
       <div class="barra-dupla"><i class="e" style="width:${(e.entradas / max * 50).toFixed(1)}%"></i><i class="s" style="width:${(e.saidas / max * 50).toFixed(1)}%"></i></div>
     </div>`;
-  }).join('')}</div></div><p class="dica largo">Toque em um evento para abrir o relatório completo dele.</p>`;
+  }).join('')}</div></div><p class="dica largo">Toque em um evento para abrir o painel dele. Ele vira o filtro de todos os relatórios.</p>`;
 }
 
 function blocoCategorias(titulo, lista, total, entrada) {
   if (!lista.length) return '';
   const max = lista[0].valor || 1;
-  return `<div class="cartao"><h3>${titulo}</h3>${lista.map(c => `
-    <div class="cat-linha"><div><span>${esc(c.categoria)}</span>
-      <strong>${fmtBRL(c.valor)} <small style="color:var(--muted);font-weight:400">${pct(c.valor, total)}</small></strong></div>
-      <div class="cat-barra ${entrada ? 'e' : ''}"><i style="width:${(c.valor / max * 100).toFixed(1)}%"></i></div></div>`).join('')}</div>`;
+  return `<div class="cartao"><h3>${titulo}</h3><p class="dica" style="margin-top:-4px">Toque em uma categoria para ver os lançamentos dela aqui mesmo.</p>${lista.map(c => `
+    <button type="button" class="etapa" data-lazy="1" data-etapa="${esc(c.categoria)}" data-tipo="${entrada ? 'Entrada' : 'Saída'}" aria-expanded="false">
+      <div class="cat-linha"><div><span><span class="seta">▸</span>${esc(c.categoria)}</span>
+        <strong>${fmtBRL(c.valor)} <small style="color:var(--muted);font-weight:400">${pct(c.valor, total)}</small></strong></div>
+        <div class="cat-barra ${entrada ? 'e' : ''}"><i style="width:${(c.valor / max * 100).toFixed(1)}%"></i></div></div>
+    </button>
+    <div class="etapa-lista" hidden></div>`).join('')}</div>`;
 }
 
 function relCategorias(r) {
@@ -1970,26 +2276,26 @@ function relCategorias(r) {
 let reqRelEv = 0;
 async function relEventoDetalhe() {
   const corpo = $('#rel-corpo');
-  if (!REL.evento || (REL.evento !== SEM_EVENTO && !S.eventos.some(e => e.nome === REL.evento))) {
-    const comDados = REL.dados && REL.dados.porEvento.find(e => e.evento !== SEM_EVENTO);
-    REL.evento = (S.resumo && S.resumo.eventoSugerido) || (comDados && comDados.evento) || (S.eventos[0] && S.eventos[0].nome) || SEM_EVENTO;
-  }
-  corpo.innerHTML = `<div class="cartao largo ev-escolha"><label>Evento<select id="rel-ev-sel"></select></label></div>
-    <div class="vazio largo" id="rel-ev-carregando"><div class="spinner peq"></div></div>`;
-  const sel = $('#rel-ev-sel');
-  opcoesEventos(sel, false);
-  sel.value = REL.evento;
-  sel.onchange = () => { REL.evento = sel.value; relEventoDetalhe(); };
   const minha = ++reqRelEv;
+  if (!REL.cacheEv[REL.evento]) corpo.innerHTML = '<div class="vazio largo"><div class="spinner peq"></div></div>';
   try {
     const d = REL.cacheEv[REL.evento] || await api('relatorioEvento', S.token, REL.evento);
     if (minha !== reqRelEv) return;
     REL.cacheEv[REL.evento] = d;
-    $('#rel-ev-carregando').remove();
-    corpo.insertAdjacentHTML('beforeend', htmlEventoDetalhe(d));
+    const de = $('#rel-de').value, ate = $('#rel-ate').value;
+    const itens = d.itens.filter(l => (!de || l.data >= de) && (!ate || l.data <= ate));
+    const recorte = itens.length !== d.itens.length;
+    const topo = `<div class="largo"><span class="filtro-ativo">Mostrando só: ${esc(REL.evento === SEM_EVENTO ? 'Dia a dia do grupo' : REL.evento)}${recorte ? ' · ' + esc(descricaoPeriodo('rel-per')) : ''}
+      <button type="button" id="rel-limpar-ev" aria-label="Voltar para todos os eventos">✕</button></span></div>`;
+    corpo.innerHTML = topo + (itens.length || !d.itens.length
+      ? htmlEventoDetalhe(Object.assign({}, d, { itens: itens }))
+      : `<div class="cartao vazio largo">Nenhum lançamento deste evento em ${esc(descricaoPeriodo('rel-per'))}.<br><button type="button" class="btn sec peq" id="rel-ev-tudo" style="margin-top:10px">Ver todo o período</button></div>`);
+    $('#rel-limpar-ev').onclick = () => escolherEventoRel('');
+    const tudo = $('#rel-ev-tudo');
+    if (tudo) tudo.onclick = () => { PER['rel-per'].modo = 'tudo'; aplicarPeriodo('rel-per'); };
     desenharGraficos(corpo);
   } catch (e) {
-    if (minha === reqRelEv && !e.tratado) $('#rel-ev-carregando').innerHTML = esc(e.message);
+    if (minha === reqRelEv && !e.tratado) corpo.innerHTML = `<div class="vazio largo">${esc(e.message)}</div>`;
   }
 }
 
@@ -2099,16 +2405,27 @@ function htmlEventoDetalhe(d) {
   return html;
 }
 
-function alternarEtapa(btn) {
+async function alternarEtapa(btn) {
   const lista = btn.nextElementSibling;
   const aberto = btn.getAttribute('aria-expanded') === 'true';
   btn.setAttribute('aria-expanded', aberto ? 'false' : 'true');
   btn.querySelector('.seta').textContent = aberto ? '▸' : '▾';
   if (aberto) { lista.hidden = true; return; }
-  const d = REL.cacheEv[REL.evento];
-  const itens = d ? d.itens.filter(l => l.tipo === btn.dataset.tipo && l.categoria === btn.dataset.etapa) : [];
-  lista.innerHTML = itens.map(itemHTML).join('') || '<div class="vazio">Nenhum lançamento.</div>';
   lista.hidden = false;
+  if (btn.dataset.lazy) {
+    lista.innerHTML = '<div class="vazio"><div class="spinner peq"></div></div>';
+    try {
+      const r = await api('listarLancamentos', S.token, { de: $('#rel-de').value, ate: $('#rel-ate').value, categoria: btn.dataset.etapa, tipo: btn.dataset.tipo, evento: REL.evento });
+      r.itens.forEach(l => { S.cache[l.id] = l; });
+      lista.innerHTML = (r.itens.map(itemHTML).join('') || '<div class="vazio">Nenhum lançamento.</div>') +
+        (r.limitado ? '<p class="dica" style="margin:8px">Mostrando os 500 mais recentes. Escolha um período menor para ver todos.</p>' : '');
+    } catch (e) { lista.innerHTML = `<div class="vazio">${esc(e.message)}</div>`; }
+    return;
+  }
+  const d = REL.cacheEv[REL.evento];
+  const de = $('#rel-de').value, ate = $('#rel-ate').value;
+  const itens = d ? d.itens.filter(l => l.tipo === btn.dataset.tipo && l.categoria === btn.dataset.etapa && (!de || l.data >= de) && (!ate || l.data <= ate)) : [];
+  lista.innerHTML = itens.map(itemHTML).join('') || '<div class="vazio">Nenhum lançamento.</div>';
 }
 
 /* ----- Curva S do saldo ----- */
@@ -2242,6 +2559,14 @@ function relMensal(r) {
 
 function relContas(r) {
   const total = r.porConta.reduce((t, c) => t + c.saldoAtual, 0);
+  if (r.evento) {
+    const usadas = r.porConta.filter(c => c.entradas || c.saidas);
+    return `<div class="cartao"><h3>Movimento por conta</h3>${usadas.length ? `<div class="tabela-wrap"><table class="rel">
+      <tr><th>Conta</th><th>Entradas</th><th>Saídas</th><th>Resultado</th></tr>
+      ${usadas.map(c => `<tr><td>${esc(c.conta)}</td><td class="c-ent">${fmtBRL(c.entradas)}</td><td class="c-sai">${fmtBRL(c.saidas)}</td><td class="${corRes(c.entradas - c.saidas)}">${fmtBRL(c.entradas - c.saidas)}</td></tr>`).join('')}
+    </table></div>` : '<div class="vazio">Nenhum lançamento no filtro escolhido.</div>'}
+    <p class="dica" style="margin:8px 0 0">O saldo de cada conta aparece com o filtro "Todos os eventos".</p></div>`;
+  }
   return `<div class="cartao"><h3>Saldo atual por conta</h3>
     ${r.porConta.map(c => `<div class="cat-admin"><div><strong>${esc(c.conta)}</strong> <span class="tag">${esc(c.tipo)}</span></div><strong>${fmtBRL(c.saldoAtual)}</strong></div>`).join('')}
     <div class="cat-admin"><div><strong>Total</strong></div><strong>${fmtBRL(total)}</strong></div></div>
@@ -2467,12 +2792,21 @@ function abrirResumoEvento() {
     const btn = $('#rs-salvar');
     ocupado(btn, true, 'Registrando...');
     try {
-      const r = await api('registrarResumoEvento', S.token, { evento: evento, data: $('#rs-data').value, conta: $('#rs-conta').value, obs: $('#rs-obs').value, linhas: linhas });
+      const dados = { evento: evento, data: $('#rs-data').value, conta: $('#rs-conta').value, obs: $('#rs-obs').value, linhas: linhas };
+      dados.chave = chaveDoEnvio('chaveResumo', dados);
+      const r = await api('registrarResumoEvento', S.token, dados);
+      S.chaveResumo = null;
       aplicarEventos(r.eventos);
       renderResumo(r.resumo);
+      invalidarRelatorios();
       fecharModal();
-      toast(`Resumo de ${evento} registrado ✓`);
-    } catch (e) { mostrarErro('#rs-erro', e); ocupado(btn, false); }
+      toast(r.repetido ? `O resumo de ${evento} já estava registrado ✓ (não foi duplicado)` : `Resumo de ${evento} registrado ✓`);
+    } catch (e) {
+      if (!e.tratado && falhaDeConexao(e)) {
+        $('#rs-erro').textContent = 'Não deu para confirmar se o resumo foi registrado, porque a conexão falhou. Toque em registrar de novo: o app não duplica.';
+      } else mostrarErro('#rs-erro', e);
+      ocupado(btn, false);
+    }
   };
 }
 
@@ -2788,15 +3122,13 @@ function ligarEventos() {
   $('#pj-todos').addEventListener('change', () => { PROJ.todosEventos = $('#pj-todos').checked; renderProjecoes(); });
 
   // Relatórios
-  $$('#rel-periodo button').forEach(b => b.addEventListener('click', () => periodoRel(b.dataset.p)));
   $$('#rel-secoes button').forEach(b => b.addEventListener('click', () => {
     REL.secao = b.dataset.s;
     renderRel();
   }));
-  ['#rel-de', '#rel-ate'].forEach(id => $(id).addEventListener('change', () => {
-    $$('#rel-periodo button').forEach(b => b.classList.remove('ativo'));
-    carregarRelatorio();
-  }));
+  $('#rel-evento').addEventListener('change', () => escolherEventoRel($('#rel-evento').value));
+  document.addEventListener('click', ev => { if (ev.target.closest('.periodo')) eventoPeriodo(ev); });
+  document.addEventListener('change', ev => { if (ev.target.closest('.periodo')) eventoPeriodo(ev); });
 
   $$('#n-tipo button').forEach(b => b.addEventListener('click', () => escolherTipo(b.dataset.tipo)));
   ['#n-foto', '#n-arquivo'].forEach(s => $(s).addEventListener('change', async ev => {
@@ -2816,10 +3148,8 @@ function ligarEventos() {
   }));
 
   // Extrato
-  $$('#e-chips button').forEach(b => b.addEventListener('click', () => definirPeriodo(b.dataset.p)));
   $('#e-btn-filtros').addEventListener('click', () => { $('#e-filtros').hidden = !$('#e-filtros').hidden; });
   $('#e-aplicar').addEventListener('click', () => {
-    $$('#e-chips button').forEach(b => b.classList.remove('ativo'));
     $('#e-filtros').hidden = true;
     carregarExtrato();
   });
@@ -2845,12 +3175,19 @@ function ligarEventos() {
   $('#modal').addEventListener('click', ev => {
     if (ev.target.id === 'modal' || ev.target.closest('[data-fechar]')) fecharModal();
   });
+  $('#visor-fechar').addEventListener('click', fecharVisor);
+  document.addEventListener('keydown', ev => {
+    if (ev.key !== 'Escape') return;
+    if (!$('#visor').hidden) fecharVisor();
+    else if (!$('#modal').hidden) fecharModal();
+  });
 
   // Cliques delegados
   document.addEventListener('click', ev => {
-    const el = ev.target.closest('[data-view], [data-novo], .item[data-id], .g-col, #btn-sem-comp, [data-u-senha], [data-u-status], [data-cat], [data-evento], [data-ev], [data-conta-saldo], [data-conta], .etapa, [data-ver-extrato], [data-pj-ano], #btn-resumo-evento');
+    const el = ev.target.closest('.item-olho[data-ver], [data-view], [data-novo], .item[data-id], .g-col, #btn-sem-comp, [data-u-senha], [data-u-status], [data-cat], [data-evento], [data-ev], [data-conta-saldo], [data-conta], .etapa, [data-ver-extrato], [data-pj-ano], #btn-resumo-evento');
     if (!el) return;
-    if (el.dataset.view) irPara(el.dataset.view);
+    if (el.dataset.ver) abrirVisor(el.dataset.ver);
+    else if (el.dataset.view) irPara(el.dataset.view);
     else if (el.dataset.novo) { limparNovo(el.dataset.novo); irPara('novo', { semRecarregar: true }); }
     else if (el.matches('.item[data-id]')) abrirDetalhe(el.dataset.id);
     else if (el.matches('.g-col') && el.dataset.detalhe) toast(`${el.dataset.mes} · ${el.dataset.detalhe}`);
