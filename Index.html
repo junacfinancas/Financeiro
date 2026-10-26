@@ -280,7 +280,13 @@
   .item { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; background: none; text-align: left;
     padding: 11px 8px; border-radius: 12px; cursor: pointer; }
   .item:hover { background: #f6f7fe; }
-  .item + .item { border-top: 1px solid var(--line); }
+  .item-wrap { display: flex; align-items: center; gap: 6px; }
+  .item-wrap + .item-wrap { border-top: 1px solid var(--line); }
+  .item-wrap > .item { flex: 1; min-width: 0; }
+  .item-olho { flex: none; width: 40px; height: 40px; margin-right: 4px; border: 1px solid var(--line); background: #fff; color: var(--royal);
+    border-radius: 12px; display: grid; place-items: center; cursor: pointer; padding: 0; }
+  .item-olho:hover { background: #f6f7fe; border-color: var(--royal); }
+  .item-olho svg { width: 20px; height: 20px; }
   .item-ico { flex: none; width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; font-size: 17px; }
   .item-ico.ent { background: var(--ent-bg); color: var(--ent); }
   .item-ico.sai { background: var(--sai-bg); color: var(--sai); }
@@ -380,6 +386,24 @@
   dl.det dt { color: var(--muted); font-weight: 600; }
   dl.det dd { margin: 0; word-break: break-word; font-weight: 700; }
   .cancel-box { background: var(--sai-bg); color: #7a1018; border-radius: 12px; padding: 10px 12px; font-size: 13.5px; margin-bottom: 14px; }
+  /* Visualizador de comprovantes (tela cheia, acima do detalhe) */
+  .visor { position: fixed; inset: 0; z-index: 55; background: rgba(12,13,40,.94); display: flex; flex-direction: column; }
+  .visor[hidden] { display: none; }
+  .visor-barra { display: flex; align-items: center; gap: 8px; padding: 10px 12px; padding-top: max(10px, env(safe-area-inset-top)); color: #fff; }
+  .visor-tit { flex: 1; min-width: 0; }
+  .visor-tit strong, .visor-tit small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .visor-tit small { opacity: .75; font-size: 12.5px; font-weight: 600; }
+  .visor-btn { flex: none; border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.08); color: #fff; border-radius: 12px;
+    padding: 9px 14px; font-weight: 800; font-size: 14px; cursor: pointer; text-decoration: none; }
+  .visor-btn:hover { background: rgba(255,255,255,.18); }
+  .visor-corpo { flex: 1; overflow: auto; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 6px 12px 28px;
+    -webkit-overflow-scrolling: touch; }
+  .visor-corpo.zoom { display: block; }
+  .visor-corpo img { max-width: 100%; max-height: calc(100vh - 96px); object-fit: contain; border-radius: 8px; background: #fff; cursor: zoom-in; }
+  .visor-corpo.zoom img { max-width: none; max-height: none; cursor: zoom-out; }
+  .visor-corpo canvas { width: 100%; max-width: 900px; height: auto; background: #fff; border-radius: 6px; box-shadow: 0 6px 20px rgba(0,0,0,.35); }
+  .visor-msg { color: #fff; text-align: center; margin: auto; display: grid; gap: 14px; justify-items: center; font-weight: 700; max-width: 420px; }
+  .visor-dica { color: rgba(255,255,255,.7); font-size: 12.5px; text-align: center; margin: 0; }
   .comp-img { width: 100%; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 8px; }
   .comp-area { margin-bottom: 12px; }
   .credencial { background: var(--bg); border-radius: 14px; padding: 14px; margin-bottom: 14px; display: grid; gap: 10px; }
@@ -848,6 +872,14 @@
 </div>
 
 <div id="modal" class="modal" hidden><div class="modal-caixa" id="modal-corpo"></div></div>
+<div id="visor" class="visor" hidden role="dialog" aria-modal="true" aria-label="Comprovante">
+  <div class="visor-barra">
+    <div class="visor-tit"><strong id="visor-tit">Comprovante</strong><small id="visor-sub"></small></div>
+    <a class="visor-btn" id="visor-baixar" hidden>Baixar</a>
+    <button type="button" class="visor-btn" id="visor-fechar" aria-label="Fechar comprovante">✕</button>
+  </div>
+  <div class="visor-corpo" id="visor-corpo"></div>
+</div>
 <div id="toast" class="toast" hidden></div>
 
 <script>
@@ -954,15 +986,21 @@ function toast(msg) {
 }
 
 function abrirModal(html) { $('#modal-corpo').innerHTML = html; $('#modal').hidden = false; $('#modal-corpo').scrollTop = 0; }
-function fecharModal() { $('#modal').hidden = true; $('#modal-corpo').innerHTML = ''; }
+let aoFecharModal = null;
+function fecharModal() {
+  $('#modal').hidden = true; $('#modal-corpo').innerHTML = '';
+  const f = aoFecharModal; aoFecharModal = null;
+  if (f) f();
+}
 
 function confirmar(titulo, texto, botao, classe) {
   return new Promise(resolve => {
     abrirModal(`<h3>${esc(titulo)}</h3><p>${esc(texto)}</p>
       <button class="btn ${classe || 'pri'} cheio" id="cf-sim">${esc(botao)}</button>
       <button class="btn link cheio" id="cf-nao">Voltar</button>`);
-    $('#cf-sim').onclick = () => { fecharModal(); resolve(true); };
-    $('#cf-nao').onclick = () => { fecharModal(); resolve(false); };
+    aoFecharModal = () => resolve(false);   // fechar pelo fundo ou pelo Esc = "Voltar"
+    $('#cf-sim').onclick = () => { aoFecharModal = null; fecharModal(); resolve(true); };
+    $('#cf-nao').onclick = () => { fecharModal(); };
   });
 }
 
@@ -1099,7 +1137,9 @@ async function fazerLogin(ev) {
 
 function encerrarSessao() {
   S.token = null; S.usuario = null; S.carregado = false; S.cache = {};
+  VISOR.cache = {}; VISOR.ordem = [];
   guardar('fin_token', null);
+  fecharVisor();
   fecharModal();
 }
 
@@ -1147,8 +1187,11 @@ async function salvarTroca(ev) {
  *  CARREGAMENTO E RESUMO
  * ============================================================ */
 async function carregarApp() {
+  const jaCarregado = S.carregado;
   mostrarTela('carregando');
-  const d = await api('getInicial', S.token);
+  let d;
+  try { d = await api('getInicial', S.token); }
+  catch (e) { if (!e.tratado) mostrarTela(jaCarregado ? 'app' : 'login'); throw e; }
   S.usuario = d.usuario; S.nomeGrupo = d.nomeGrupo; S.categorias = d.categorias; S.eventos = d.eventos;
   S.contas = d.contas; S.formas = d.formas; S.hoje = d.hoje; S.carregado = true;
   guardar('fin_grupo', d.nomeGrupo);
@@ -1310,15 +1353,18 @@ function itemHTML(l) {
   const ent = l.tipo === 'Entrada', trf = l.tipo === 'Transferência';
   const extra = l.status === 'Cancelado' ? ' · cancelado'
     : l.resumo ? ' · resumo'
-    : (l.tipo === 'Saída' && !l.temComprovante && !l.historico ? ' · <em class="sem">sem comprovante</em>' : (l.temComprovante ? ' · 📎' : ''));
+    : (l.tipo === 'Saída' && !l.temComprovante && !l.historico ? ' · <em class="sem">sem comprovante</em>' : '');
   const sub = trf ? `${esc(l.conta)} → ${esc(l.contaDestino)}` : esc(l.categoria);
   const cls = trf ? 'trf' : ent ? 'ent' : 'sai';
-  return `<button type="button" class="item ${l.status === 'Cancelado' ? 'cancelado' : ''}" data-id="${esc(l.id)}">
+  const olho = l.temComprovante
+    ? `<button type="button" class="item-olho" data-ver="${esc(l.id)}" aria-label="Ver comprovante" title="Ver comprovante">${ICONE_OLHO}</button>` : '';
+  return `<div class="item-wrap"><button type="button" class="item ${l.status === 'Cancelado' ? 'cancelado' : ''}" data-id="${esc(l.id)}">
     <span class="item-ico ${cls}">${trf ? '⇄' : ent ? '↑' : '↓'}</span>
     <span class="item-txt"><strong>${esc(l.descricao)}</strong><small>${sub} · ${esc(l.dataBR)}${extra}</small></span>
     <span class="item-valor c-${cls}">${trf ? '' : ent ? '+ ' : '− '}${fmtBRL(l.valor)}</span>
-  </button>`;
+  </button>${olho}</div>`;
 }
+const ICONE_OLHO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
 
 /* ============================================================
  *  NOVO LANÇAMENTO
@@ -1472,10 +1518,12 @@ async function salvarNovo(ev) {
     const ok = await confirmar('Salvar sem comprovante?', 'Sem problema: o lançamento fica marcado como pendente e você anexa o comprovante depois, abrindo o lançamento no extrato.', 'Salvar sem comprovante');
     if (!ok) return;
   }
+  d.chave = chaveDoEnvio('chaveNovo', d);
   const btn = $('#n-salvar');
   ocupado(btn, true, d.arquivo ? 'Enviando comprovante...' : 'Salvando...');
   try {
     const r = await api('salvarLancamento', S.token, d);
+    S.chaveNovo = null;
     if (!trf) guardar('fin_conta', d.conta);
     const eventoUsado = d.evento;
     renderResumo(r.resumo);
@@ -1483,10 +1531,35 @@ async function salvarNovo(ev) {
     // mantém o evento para lançamentos em sequência
     $('#n-evento').value = eventoUsado;
     invalidarRelatorios();
-    toast(`Lançamento ${r.id} salvo ✓`);
+    toast(r.repetido ? `O lançamento ${r.id} já estava salvo ✓ (não foi duplicado)` : `Lançamento ${r.id} salvo ✓`);
     irPara('inicio', { semRecarregar: true });
-  } catch (e) { mostrarErro('#n-erro', e); }
+    if (r.aviso) mostrarAviso(r.aviso);
+  } catch (e) {
+    if (!e.tratado && falhaDeConexao(e)) {
+      $('#n-erro').textContent = 'Não deu para confirmar se o lançamento foi salvo, porque a conexão falhou. ' +
+        'Confira a internet e toque em salvar de novo: se ele já tiver sido gravado, o app reconhece e não duplica.';
+    } else mostrarErro('#n-erro', e);
+  }
   finally { ocupado(btn, false); }
+}
+
+// Identificador do envio: o mesmo enquanto o formulário não mudar. Se a resposta se perder e a pessoa
+// tentar de novo, o servidor reconhece o identificador e não grava duas vezes.
+function chaveDoEnvio(slot, d) {
+  const assin = JSON.stringify(d, (k, v) => k === 'chave' ? undefined : (k === 'base64' ? String(v).length + ':' + String(v).slice(-64) : v));
+  if (!S[slot] || S[slot].assin !== assin) S[slot] = { assin: assin, chave: novaChave() };
+  return S[slot].chave;
+}
+function novaChave() {
+  try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}
+  return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12) + '-' + Math.random().toString(36).slice(2, 12);
+}
+function falhaDeConexao(e) {
+  return /sem conex|n[aã]o respondeu como esperado|network|failed to fetch|http 0|connection/i.test(String(e && e.message));
+}
+function mostrarAviso(texto) {
+  abrirModal(`<h3>Atenção</h3><p>${esc(texto)}</p>
+    <button type="button" class="btn pri cheio" data-fechar>Entendi</button>`);
 }
 
 function novoEventoRapido() {
@@ -1617,15 +1690,14 @@ async function carregarExtrato() {
     const r = await api('listarLancamentos', S.token, filtrosAtuais());
     if (minha !== reqExtrato) return;
     r.itens.forEach(l => { S.cache[l.id] = l; });
-    S.extrato = { itens: r.itens, mostrados: 0 };
+    S.extrato = { itens: r.itens, mostrados: 0, total: r.total, filtros: filtrosAtuais(), req: minha };
     const res = r.entradas - r.saidas;
     $('#e-totais').innerHTML = `
       <div><span>Entradas</span><strong class="c-ent">${fmtBRL(r.entradas)}</strong></div>
       <div><span>Saídas</span><strong class="c-sai">${fmtBRL(r.saidas)}</strong></div>
       <div><span>Resultado</span><strong class="${res > 0 ? 'c-ent' : res < 0 ? 'c-sai' : ''}">${fmtBRL(res)}</strong></div>`;
     $('#e-info').textContent = `${r.total} lançamento${r.total === 1 ? '' : 's'}` +
-      (r.transferencias ? ` · ${fmtBRL(r.transferencias)} em transferências entre contas (fora dos totais)` : '') +
-      (r.limitado ? ' · mostrando os 500 mais recentes, use os filtros para refinar' : '');
+      (r.transferencias ? ` · ${fmtBRL(r.transferencias)} em transferências entre contas (fora dos totais)` : '');
     $('#e-lista').innerHTML = '';
     mostrarMais();
   } catch (e) {
@@ -1633,17 +1705,32 @@ async function carregarExtrato() {
   }
 }
 
-function mostrarMais() {
-  const { itens, mostrados } = S.extrato;
-  if (!itens.length) {
+async function mostrarMais() {
+  const ex = S.extrato;
+  if (!ex.itens.length) {
     $('#e-lista').innerHTML = '<div class="vazio">Nenhum lançamento encontrado com esses filtros.</div>';
     $('#e-mais').hidden = true;
     return;
   }
-  const prox = itens.slice(mostrados, mostrados + POR_PAGINA);
+  // Já mostrou tudo o que veio do servidor, mas há mais: busca a próxima página
+  if (ex.mostrados >= ex.itens.length && ex.itens.length < ex.total) {
+    const btn = $('#e-mais');
+    ocupado(btn, true, 'Carregando...');
+    try {
+      const r = await api('listarLancamentos', S.token, Object.assign({}, ex.filtros, { inicio: ex.itens.length }));
+      if (ex.req !== reqExtrato) return;
+      const vistos = new Set(ex.itens.map(l => l.id));
+      const novos = r.itens.filter(l => !vistos.has(l.id));
+      novos.forEach(l => { S.cache[l.id] = l; });
+      ex.itens = ex.itens.concat(novos);
+      ex.total = novos.length ? r.total : ex.itens.length;
+    } catch (e) { avisarErro(e); return; }
+    finally { ocupado(btn, false); }
+  }
+  const prox = ex.itens.slice(ex.mostrados, ex.mostrados + POR_PAGINA);
   $('#e-lista').insertAdjacentHTML('beforeend', prox.map(itemHTML).join(''));
-  S.extrato.mostrados += prox.length;
-  $('#e-mais').hidden = S.extrato.mostrados >= itens.length;
+  ex.mostrados += prox.length;
+  $('#e-mais').hidden = ex.mostrados >= Math.max(ex.total, ex.itens.length);
 }
 
 function verSemComprovante() {
@@ -1693,25 +1780,124 @@ function abrirDetalhe(id) {
     <button type="button" class="btn link cheio" data-fechar>Fechar</button>`);
 
   const ver = $('#det-ver');
-  if (ver) ver.onclick = () => verComprovante(l.id, ver);
+  if (ver) ver.onclick = () => abrirVisor(l.id);
   $$('.det-arq').forEach(inp => { inp.onchange = () => anexarDepois(l.id, inp); });
   const canc = $('#det-cancelar');
   if (canc) canc.onclick = () => pedirCancelamento(l.id);
 }
 
-async function verComprovante(id, btn) {
-  ocupado(btn, true, 'Carregando...');
-  try {
-    const c = await api('getComprovante', S.token, id);
-    const area = $('#det-comp');
-    if (!area) return;
-    if (c.mime.indexOf('image/') === 0) {
-      area.innerHTML = `<img class="comp-img" src="data:${c.mime};base64,${c.base64}" alt="Comprovante">`;
-    } else {
-      const url = URL.createObjectURL(b64ParaBlob(c.base64, c.mime));
-      area.innerHTML = `<a class="btn sec cheio" href="${url}" download="${esc(c.nome)}" target="_blank">Abrir PDF do comprovante</a>`;
-    }
-  } catch (e) { avisarErro(e); ocupado(btn, false); }
+/* ----- Visualizador de comprovantes ----- */
+const VISOR = { cache: {}, ordem: [], atual: null, pdfjs: null, url: null };
+// pdf.js (leitor de PDF) só é baixado na primeira vez que alguém abre um PDF.
+function basePdfJs() { return window.JUNAC_PDFJS_BASE || ('https:' + '/' + '/cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/'); }
+function carregarPdfJs() {
+  if (VISOR.pdfjs) return VISOR.pdfjs;
+  VISOR.pdfjs = new Promise((resolve, reject) => {
+    if (window.pdfjsLib) { resolve(window.pdfjsLib); return; }
+    const s = document.createElement('script');
+    s.src = basePdfJs() + 'pdf.min.js';
+    s.onload = () => {
+      const lib = window.pdfjsLib;
+      if (!lib) { reject(new Error('Leitor de PDF indisponível.')); return; }
+      lib.GlobalWorkerOptions.workerSrc = basePdfJs() + 'pdf.worker.min.js';
+      resolve(lib);
+    };
+    s.onerror = () => reject(new Error('Não foi possível carregar o leitor de PDF.'));
+    document.head.appendChild(s);
+  }).catch(e => { VISOR.pdfjs = null; throw e; });
+  return VISOR.pdfjs;
+}
+
+async function buscarComprovante(id) {
+  if (VISOR.cache[id]) return VISOR.cache[id];
+  const c = await api('getComprovante', S.token, id);
+  VISOR.cache[id] = c; VISOR.ordem.push(id);
+  while (VISOR.ordem.length > 8) delete VISOR.cache[VISOR.ordem.shift()];  // guarda só os últimos 8 na memória
+  return c;
+}
+
+function fecharVisor() {
+  $('#visor').hidden = true;
+  $('#visor-corpo').innerHTML = '';
+  VISOR.atual = null;
+  if (VISOR.url) { URL.revokeObjectURL(VISOR.url); VISOR.url = null; }
+}
+
+function visorMensagem(texto, comBaixar) {
+  const b = $('#visor-baixar');
+  $('#visor-corpo').classList.remove('zoom');
+  $('#visor-corpo').innerHTML = `<div class="visor-msg"><span>${esc(texto)}</span>` +
+    (comBaixar && !b.hidden ? `<a class="visor-btn" href="${b.href}" download="${esc(b.download)}" target="_blank">Baixar o arquivo</a>` : '') + '</div>';
+}
+
+async function abrirVisor(id) {
+  const l = S.cache[id];
+  const marca = id + ':' + Date.now();
+  VISOR.atual = marca;
+  if (VISOR.url) { URL.revokeObjectURL(VISOR.url); VISOR.url = null; }
+  $('#visor-tit').textContent = l ? l.descricao : 'Comprovante';
+  $('#visor-sub').textContent = l ? `${fmtBRL(l.valor)} · ${l.dataBR} · ${l.id}` : id;
+  const baixar = $('#visor-baixar');
+  baixar.hidden = true;
+  const corpo = $('#visor-corpo');
+  corpo.classList.remove('zoom');
+  corpo.innerHTML = '<div class="visor-msg"><div class="spinner"></div><span>Carregando comprovante...</span></div>';
+  $('#visor').hidden = false;
+  let c;
+  try { c = await buscarComprovante(id); }
+  catch (e) {
+    if (VISOR.atual !== marca) return;
+    if (e.tratado) { fecharVisor(); return; }
+    visorMensagem(e.message, false);
+    return;
+  }
+  if (VISOR.atual !== marca) return;
+  VISOR.url = URL.createObjectURL(b64ParaBlob(c.base64, c.mime));
+  baixar.href = VISOR.url; baixar.download = c.nome; baixar.target = '_blank'; baixar.hidden = false;
+
+  if (c.mime.indexOf('image/') === 0) {
+    corpo.innerHTML = '<img alt="Comprovante">';
+    const img = corpo.querySelector('img');
+    img.onerror = () => { if (VISOR.atual === marca) visorMensagem('Este formato de imagem não pode ser mostrado aqui (fotos HEIC do iPhone, por exemplo).', true); };
+    img.onload = () => {
+      if (VISOR.atual === marca && !corpo.querySelector('.visor-dica')) corpo.insertAdjacentHTML('beforeend', '<p class="visor-dica">Toque na imagem para ampliar</p>');
+    };
+    img.onclick = () => corpo.classList.toggle('zoom');
+    img.src = `data:${c.mime};base64,${c.base64}`;
+  } else if (c.mime === 'application/pdf') {
+    try { await desenharPdf(c, marca); }
+    catch (e) { if (VISOR.atual === marca) visorMensagem('Não foi possível mostrar o PDF aqui.', true); }
+  } else {
+    visorMensagem('Este tipo de arquivo não pode ser mostrado aqui.', true);
+  }
+}
+
+async function desenharPdf(c, marca) {
+  const lib = await carregarPdfJs();
+  const bin = atob(c.base64); const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const doc = await lib.getDocument({ data: bytes }).promise;
+  if (VISOR.atual !== marca) return;
+  const corpo = $('#visor-corpo');
+  corpo.innerHTML = '';
+  const largura = Math.max(280, Math.min(corpo.clientWidth - 24, 900));
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const MAX_PAGINAS = 20;
+  const n = Math.min(doc.numPages, MAX_PAGINAS);
+  for (let i = 1; i <= n; i++) {
+    const pg = await doc.getPage(i);
+    if (VISOR.atual !== marca) return;
+    const vp = pg.getViewport({ scale: largura / pg.getViewport({ scale: 1 }).width * dpr });
+    const cv = document.createElement('canvas');
+    cv.width = Math.floor(vp.width); cv.height = Math.floor(vp.height);
+    cv.setAttribute('aria-label', `Página ${i} de ${doc.numPages}`);
+    corpo.appendChild(cv);
+    await pg.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise;
+  }
+  if (VISOR.atual !== marca) return;
+  corpo.insertAdjacentHTML('beforeend', doc.numPages > n
+    ? `<p class="visor-dica">Mostrando ${n} de ${doc.numPages} páginas. Use "Baixar" para ver o arquivo completo.</p>`
+    : `<p class="visor-dica">${doc.numPages} página${doc.numPages === 1 ? '' : 's'}</p>`);
 }
 
 async function anexarDepois(id, input) {
@@ -2571,12 +2757,21 @@ function abrirResumoEvento() {
     const btn = $('#rs-salvar');
     ocupado(btn, true, 'Registrando...');
     try {
-      const r = await api('registrarResumoEvento', S.token, { evento: evento, data: $('#rs-data').value, conta: $('#rs-conta').value, obs: $('#rs-obs').value, linhas: linhas });
+      const dados = { evento: evento, data: $('#rs-data').value, conta: $('#rs-conta').value, obs: $('#rs-obs').value, linhas: linhas };
+      dados.chave = chaveDoEnvio('chaveResumo', dados);
+      const r = await api('registrarResumoEvento', S.token, dados);
+      S.chaveResumo = null;
       aplicarEventos(r.eventos);
       renderResumo(r.resumo);
+      invalidarRelatorios();
       fecharModal();
-      toast(`Resumo de ${evento} registrado ✓`);
-    } catch (e) { mostrarErro('#rs-erro', e); ocupado(btn, false); }
+      toast(r.repetido ? `O resumo de ${evento} já estava registrado ✓ (não foi duplicado)` : `Resumo de ${evento} registrado ✓`);
+    } catch (e) {
+      if (!e.tratado && falhaDeConexao(e)) {
+        $('#rs-erro').textContent = 'Não deu para confirmar se o resumo foi registrado, porque a conexão falhou. Toque em registrar de novo: o app não duplica.';
+      } else mostrarErro('#rs-erro', e);
+      ocupado(btn, false);
+    }
   };
 }
 
@@ -2945,12 +3140,19 @@ function ligarEventos() {
   $('#modal').addEventListener('click', ev => {
     if (ev.target.id === 'modal' || ev.target.closest('[data-fechar]')) fecharModal();
   });
+  $('#visor-fechar').addEventListener('click', fecharVisor);
+  document.addEventListener('keydown', ev => {
+    if (ev.key !== 'Escape') return;
+    if (!$('#visor').hidden) fecharVisor();
+    else if (!$('#modal').hidden) fecharModal();
+  });
 
   // Cliques delegados
   document.addEventListener('click', ev => {
-    const el = ev.target.closest('[data-view], [data-novo], .item[data-id], .g-col, #btn-sem-comp, [data-u-senha], [data-u-status], [data-cat], [data-evento], [data-ev], [data-conta-saldo], [data-conta], .etapa, [data-ver-extrato], [data-pj-ano], #btn-resumo-evento');
+    const el = ev.target.closest('.item-olho[data-ver], [data-view], [data-novo], .item[data-id], .g-col, #btn-sem-comp, [data-u-senha], [data-u-status], [data-cat], [data-evento], [data-ev], [data-conta-saldo], [data-conta], .etapa, [data-ver-extrato], [data-pj-ano], #btn-resumo-evento');
     if (!el) return;
-    if (el.dataset.view) irPara(el.dataset.view);
+    if (el.dataset.ver) abrirVisor(el.dataset.ver);
+    else if (el.dataset.view) irPara(el.dataset.view);
     else if (el.dataset.novo) { limparNovo(el.dataset.novo); irPara('novo', { semRecarregar: true }); }
     else if (el.matches('.item[data-id]')) abrirDetalhe(el.dataset.id);
     else if (el.matches('.g-col') && el.dataset.detalhe) toast(`${el.dataset.mes} · ${el.dataset.detalhe}`);
