@@ -72,6 +72,7 @@
   .btn.ouro { background: var(--amarelo); color: var(--noite); }
   .btn.link { background: none; color: var(--royal); padding: 8px; min-height: 0; }
   .btn.perigo { background: var(--sai-bg); color: var(--sai); }
+  .btn.link.apagar { color: var(--sai); }
   .btn.peq { padding: 7px 11px; min-height: 0; font-size: 13px; }
   .cheio { width: 100%; }
   .cheio + .cheio { margin-top: 8px; }
@@ -1777,11 +1778,14 @@ function abrirDetalhe(id) {
     </dl>
     <div class="comp-area" id="det-comp">${comp}</div>
     ${podeCancelar ? '<button type="button" class="btn perigo cheio" id="det-cancelar">Cancelar lançamento</button>' : ''}
+    ${ehAdmin() ? '<button type="button" class="btn link cheio apagar" id="det-apagar">Apagar definitivamente</button>' : ''}
     <button type="button" class="btn link cheio" data-fechar>Fechar</button>`);
 
   const ver = $('#det-ver');
   if (ver) ver.onclick = () => abrirVisor(l.id);
   $$('.det-arq').forEach(inp => { inp.onchange = () => anexarDepois(l.id, inp); });
+  const apagar = $('#det-apagar');
+  if (apagar) apagar.onclick = () => pedirApagamento(l.id);
   const canc = $('#det-cancelar');
   if (canc) canc.onclick = () => pedirCancelamento(l.id);
 }
@@ -1913,6 +1917,37 @@ async function anexarDepois(id, input) {
     toast('Comprovante anexado ✓');
     abrirDetalhe(id);
   } catch (e) { avisarErro(e); abrirDetalhe(id); }
+}
+
+function pedirApagamento(id) {
+  const l = S.cache[id];
+  abrirModal(`<h3>Apagar lançamento</h3>
+    <p>${esc(l.descricao)} · <strong>${fmtBRL(l.valor)}</strong> · ${esc(l.dataBR)} · ${esc(l.id)}</p>
+    <div class="cancel-box">O lançamento sai da planilha de vez e deixa de contar em todos os saldos e relatórios.
+      Use para testes ou lançamentos feitos por engano. Para corrigir um lançamento real, prefira <strong>Cancelar</strong>, que mantém o histórico.
+      ${l.temComprovante ? '<br><br>O comprovante vai para a lixeira do Drive (dá para recuperar por 30 dias).' : ''}
+      <br><br>Uma cópia dos dados fica registrada na aba Historico da planilha.</div>
+    <label>Motivo<input id="ap-motivo" maxlength="200" placeholder="Ex.: lançamento de teste"></label>
+    <p class="erro" id="ap-erro"></p>
+    <button type="button" class="btn sai cheio" id="ap-ok">Apagar definitivamente</button>
+    <button type="button" class="btn link cheio" id="ap-voltar">Voltar</button>`);
+  setTimeout(() => $('#ap-motivo').focus(), 50);
+  $('#ap-voltar').onclick = () => abrirDetalhe(id);
+  $('#ap-ok').onclick = async () => {
+    const motivo = $('#ap-motivo').value.trim();
+    if (motivo.length < 3) { $('#ap-erro').textContent = 'Informe o motivo (ex.: lançamento de teste).'; return; }
+    const btn = $('#ap-ok');
+    ocupado(btn, true, 'Apagando...');
+    try {
+      const r = await api('apagarLancamento', S.token, id, motivo);
+      delete S.cache[id]; delete VISOR.cache[id];
+      renderResumo(r.resumo);
+      invalidarRelatorios();
+      if (!$('#v-extrato').hidden) carregarExtrato();
+      fecharModal();
+      toast(`Lançamento ${r.id} apagado.`);
+    } catch (e) { mostrarErro('#ap-erro', e); ocupado(btn, false); }
+  };
 }
 
 function pedirCancelamento(id) {
