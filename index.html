@@ -25,7 +25,7 @@
     --cruz-azul: #0095d9; --cruz-verde: #00a94f; --cruz-vermelho: #ec1824;
     --bg: #eef0fb; --card: #fff; --txt: #13153e; --muted: #5b6086; --line: #e2e5f3; --campo: #cfd3ea;
     --pri: var(--royal); --pri-esc: var(--noite); --pri-bg: #e6e7fc;
-    --ent: #00803c; --ent-forte: #006f37; --ent-bg: #e0f4e8;
+    --ent: #007a39; --ent-forte: #006f37; --ent-bg: #e0f4e8;
     --sai: #cf1420; --sai-forte: #f4646a; --sai-bg: #fde6e7;
     --trf: #0073a8; --trf-forte: #0095d9; --trf-bg: #def1fb;
     --aviso: #5f5200; --aviso-bg: #fff8b8;
@@ -42,7 +42,10 @@
   h2 { font-size: 26px; margin: 2px 2px 16px; letter-spacing: -.2px; }
   h3 { font-size: 17px; margin-bottom: 12px; font-weight: 500; }
   button, input, select, textarea { font: inherit; color: inherit; }
-  :focus-visible { outline: 3px solid var(--amarelo); outline-offset: 2px; }
+  /* Contorno do foco do teclado: azul royal nos fundos claros (9,8:1 sobre o branco); amarelo nos fundos escuros
+   * (topo, cartão do saldo, visualizador e menu lateral do computador), onde o amarelo tem 14,7:1. */
+  :focus-visible { outline: 3px solid var(--royal); outline-offset: 2px; }
+  .topo :focus-visible, .saldo :focus-visible, .visor :focus-visible { outline-color: var(--amarelo); }
   input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; }
   .c-ent { color: var(--ent); } .c-sai { color: var(--sai); } .c-trf { color: var(--trf); }
   .so-desktop { display: none; }
@@ -62,7 +65,6 @@
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 12px;
     padding: 12px 16px; font-weight: 800; cursor: pointer; min-height: 48px; text-decoration: none; transition: filter .15s, transform .1s; }
   .btn:active { transform: scale(.98); }
-  .btn:hover { filter: brightness(1.05); }
   .btn:disabled { opacity: .6; cursor: default; }
   .btn.pri { background: var(--royal); color: #fff; }
   .btn.sec { background: var(--pri-bg); color: var(--noite); }
@@ -90,7 +92,7 @@
   .faixa { height: 5px; background: var(--faixa); }
 
   /* ---------- Carregando e entrada (login / troca de senha) ---------- */
-  .tela-marca { min-height: 100vh; background: radial-gradient(120% 90% at 85% 10%, var(--royal) 0%, var(--noite-2) 45%, var(--noite) 100%); color: #fff; }
+  .tela-marca { min-height: 100vh; min-height: 100svh; background: radial-gradient(120% 90% at 85% 10%, var(--royal) 0%, var(--noite-2) 45%, var(--noite) 100%); color: #fff; }
   #carregando { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; }
   #carregando img { width: 96px; height: 96px; border-radius: 26px; animation: pulsa 1.6s ease-in-out infinite; }
   #carregando .spinner { border-color: rgba(255,255,255,.18); border-top-color: var(--amarelo); }
@@ -125,8 +127,10 @@
   .nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; background: #fff; border-top: 1px solid var(--line);
     display: flex; justify-content: center; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -6px 20px -12px rgba(19,21,62,.25); }
   .nav-marca, .nav-rodape { display: none; }
-  .nav button { flex: 1; max-width: 104px; font-size: 11.5px; border: 0; background: none; padding: 8px 4px 10px; display: flex; flex-direction: column;
-    align-items: center; gap: 2px; font-size: 12px; font-weight: 700; color: var(--muted); cursor: pointer; }
+  /* Todos os botões com a mesma largura (flex-basis 0 e min-width 0): com os 6 itens do conselho, cabem até em 320px.
+   * O rótulo diminui um pouco só nas telas mais estreitas, para "Relatórios" e "Cadastros" caberem inteiros. */
+  .nav button { flex: 1 1 0; min-width: 0; max-width: 104px; border: 0; background: none; padding: 8px 0 10px; display: flex; flex-direction: column;
+    align-items: center; gap: 2px; font-size: clamp(11px, 3.4vw, 12px); font-weight: 700; color: var(--muted); cursor: pointer; white-space: nowrap; }
   .nav button svg { width: 24px; height: 24px; }
   .nav button.ativo { color: var(--royal); }
   .nav .nav-mais .bola { width: 50px; height: 50px; margin-top: -22px; border-radius: 17px; background: var(--amarelo); color: var(--noite);
@@ -152,8 +156,10 @@
   .acoes { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; }
   .acoes .btn { font-size: 14.5px; padding: 12px 8px; }
   .titulo-mes { font-family: var(--display); font-size: 18px; font-weight: 500; color: var(--noite); margin: 4px 2px 10px; }
-  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
-  .mini { background: var(--card); border-radius: 16px; padding: 12px 11px; box-shadow: var(--sombra); min-width: 0; }
+  /* Cartões de valores (aqui, no destaque, no Extrato e nos Relatórios): ficam lado a lado enquanto o valor cabe inteiro;
+   * quando não cabe (tela estreita ou valor muito alto), o cartão desce para a linha de baixo. Valor em dinheiro nunca é cortado. */
+  .grid3 { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .mini { background: var(--card); border-radius: 16px; padding: 12px 11px; box-shadow: var(--sombra); flex: 1 0 0; min-width: min-content; }
   .mini span { display: block; font-size: 12.5px; color: var(--muted); font-weight: 700; }
   .mini strong { display: block; font-family: var(--display); font-weight: 600; font-size: clamp(14px, 4vw, 18px); margin: 2px 0; white-space: nowrap; }
   .mini small { display: block; font-size: 11px; color: var(--muted); line-height: 1.3; }
@@ -186,8 +192,8 @@
   .destaque-topo svg { flex: none; width: 28px; height: 26px; }
   .destaque-topo select { margin: 0; flex: 1; font-family: var(--display); font-weight: 500; font-size: 17px; min-height: 44px; padding: 8px 10px; border-color: var(--line); }
   .destaque-info { font-size: 13px; color: var(--muted); margin: -4px 0 12px; font-weight: 600; }
-  .nums3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
-  .nums3 div { background: var(--bg); border-radius: 12px; padding: 9px 9px; min-width: 0; }
+  .nums3 { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .nums3 div { background: var(--bg); border-radius: 12px; padding: 9px 9px; flex: 1 0 0; min-width: min-content; }
   .nums3 span { display: block; font-size: 12px; color: var(--muted); font-weight: 700; }
   .nums3 strong { display: block; font-family: var(--display); font-weight: 600; font-size: clamp(12.5px, 3.6vw, 17px); white-space: nowrap; }
   .sub-titulo { font-size: 13.5px; font-weight: 800; color: var(--noite); margin: 6px 0 10px; }
@@ -197,16 +203,27 @@
 
   /* ---------- Relatórios ---------- */
   .tabela-wrap { overflow-x: auto; margin: 0 -4px; padding: 0 4px; }
+  /* Tabela que não cabe na largura: cada linha vira um bloco, com o nome da coluna ao lado de cada valor.
+   * Assim nenhuma coluna fica escondida atrás de uma rolagem lateral (ver ajustarTabelas). */
+  table.empilhada, table.empilhada tbody, table.empilhada tr { display: block; }
+  table.empilhada tr.cab { display: none; }
+  table.empilhada tr { padding: 10px 0 8px; border-top: 1px solid var(--line); }
+  table.empilhada tr.total { border-top: 2px solid var(--noite); }
+  table.empilhada tr.atual { background: var(--aviso-bg); border-radius: 10px; padding-inline: 8px; }
+  table.empilhada td { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 2px 0;
+    border: 0; text-align: right; white-space: normal; background: none; min-width: 0; }
+  table.empilhada td::before { content: attr(data-rotulo); color: var(--muted); font-size: 12.5px; font-weight: 700; text-align: left; }
+  table.empilhada td:first-child { display: block; text-align: left; font-weight: 800; padding-bottom: 4px; min-width: 0; }
+  table.empilhada td:first-child::before { content: none; }
+  table.empilhada td:empty { display: none; }
   table.rel { width: 100%; border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }
   table.rel th { text-align: right; font-size: 12px; color: var(--muted); font-weight: 700; padding: 0 8px 8px; white-space: nowrap; }
   table.rel td { text-align: right; padding: 9px 8px; border-top: 1px solid var(--line); white-space: nowrap; font-weight: 600; }
   table.rel th:first-child, table.rel td:first-child { text-align: left; padding-left: 0; white-space: normal; min-width: 130px; }
   table.rel tr.total td { font-weight: 800; border-top: 2px solid var(--noite); }
-  table.rel tbody tr:hover td, table.rel tr:hover td { background: #f6f7fe; }
   .var-up { color: var(--sai); font-size: 11.5px; font-weight: 800; } .var-down { color: var(--ent); font-size: 11.5px; font-weight: 800; }
   .ev-linha { padding: 13px 4px; cursor: pointer; border-radius: 10px; break-inside: avoid; }
   .ev-linha + .ev-linha { border-top: 1px solid var(--line); }
-  .ev-linha:hover { background: #f6f7fe; }
   .ev-linha .l1 { display: flex; justify-content: space-between; gap: 8px; font-weight: 800; }
   .ev-linha .l1 span:last-child { font-family: var(--display); font-weight: 600; }
   .ev-linha .l2 { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; color: var(--muted); margin-top: 2px; flex-wrap: wrap; }
@@ -245,18 +262,17 @@
     border-radius: 12px; box-shadow: 0 10px 26px -8px rgba(19,21,62,.35); padding: 8px 10px; font-size: 12.5px; line-height: 1.55; white-space: nowrap; }
   .g-dica i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; }
   .g-dica .g-sub { color: var(--muted); margin-top: 2px; }
-  .kpis4 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-  .kpis4 div { background: var(--bg); border-radius: 12px; padding: 10px 11px; min-width: 0; }
+  .kpis4 { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .kpis4 div { background: var(--bg); border-radius: 12px; padding: 10px 11px; flex: 1 0 calc(50% - 4px); min-width: min-content; }
   .kpis4 span { display: block; font-size: 12px; color: var(--muted); font-weight: 700; }
   .kpis4 strong { display: block; font-family: var(--display); font-weight: 600; font-size: clamp(15px, 4.4vw, 20px); white-space: nowrap; }
   .kpis4 small { display: block; font-size: 11.5px; color: var(--muted); }
-  @media (min-width: 700px) { .kpis4 { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 700px) { .kpis4 div { flex-basis: calc(25% - 6px); } }
   .insights { margin: 0 0 12px; padding-left: 18px; font-size: 14px; }
   .insights li { margin-bottom: 6px; }
   .ev-cabeca { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .ev-escolha label { margin: 0; }
   .etapa { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 8px 6px 2px; border-radius: 12px; cursor: pointer; }
-  .etapa:hover { background: #f6f7fe; }
   .etapa .seta { display: inline-block; width: 16px; color: var(--royal); font-weight: 800; }
   .etapa-lista { margin: 2px 0 10px; padding: 4px 6px; background: #f6f7fe; border-radius: 12px; }
   .tend-ev { padding: 12px 0; border-top: 1px solid var(--line); }
@@ -266,7 +282,8 @@
   table.rel tr.atual td { background: var(--aviso-bg); }
   .proj-grid { display: flex; flex-direction: column; }
   .chips.multi { flex-wrap: wrap; overflow: visible; }
-  .chips.multi button small { font-weight: 600; opacity: .75; }
+  .chips.multi button small { font-weight: 600; }
+  .chips.multi button:not(.ativo) small { opacity: .75; }
   .chips.multi button.ativo::before { content: "✓ "; }
   .check { display: flex; gap: 10px; align-items: flex-start; font-weight: 600; font-size: 13.5px; }
   .check input { width: 20px; height: 20px; min-height: 0; margin: 1px 0 0; flex: none; }
@@ -280,13 +297,11 @@
   .cartao.lista { padding: 6px 8px; }
   .item { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; background: none; text-align: left;
     padding: 11px 8px; border-radius: 12px; cursor: pointer; }
-  .item:hover { background: #f6f7fe; }
   .item-wrap { display: flex; align-items: center; gap: 6px; }
   .item-wrap + .item-wrap { border-top: 1px solid var(--line); }
   .item-wrap > .item { flex: 1; min-width: 0; }
   .item-olho { flex: none; width: 40px; height: 40px; margin-right: 4px; border: 1px solid var(--line); background: #fff; color: var(--royal);
     border-radius: 12px; display: grid; place-items: center; cursor: pointer; padding: 0; }
-  .item-olho:hover { background: #f6f7fe; border-color: var(--royal); }
   .item-olho svg { width: 20px; height: 20px; }
   .item-ico { flex: none; width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; font-size: 17px; }
   .item-ico.ent { background: var(--ent-bg); color: var(--ent); }
@@ -298,6 +313,7 @@
   .item-valor { flex: none; font-weight: 800; font-size: 14.5px; font-variant-numeric: tabular-nums; }
   .item.cancelado { opacity: .55; }
   .item.cancelado .item-valor, .item.cancelado strong { text-decoration: line-through; }
+  .orfa { font-weight: 700; color: inherit; opacity: .85; }
   .sem { color: #8a6d00; font-style: normal; font-weight: 800; }
   .vazio { text-align: center; color: var(--muted); padding: 24px 12px; font-size: 14px; }
 
@@ -329,10 +345,10 @@
   .busca-linha input { margin: 0; }
   .busca-linha .btn { flex: none; }
   .badge { display: inline-grid; place-items: center; min-width: 20px; height: 20px; border-radius: 10px; background: var(--amarelo); color: var(--noite); font-size: 11.5px; padding: 0 6px; }
-  .totais { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 6px; }
-  .totais div { background: var(--card); border-radius: 14px; padding: 10px 11px; box-shadow: var(--sombra); min-width: 0; }
+  .totais { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+  .totais div { background: var(--card); border-radius: 14px; padding: 10px 11px; box-shadow: var(--sombra); flex: 1 0 0; min-width: min-content; }
   .totais span { display: block; font-size: 12px; color: var(--muted); font-weight: 700; }
-  .totais strong { display: block; font-family: var(--display); font-weight: 600; font-size: clamp(13px, 3.8vw, 18px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .totais strong { display: block; font-family: var(--display); font-weight: 600; font-size: clamp(13px, 3.8vw, 18px); white-space: nowrap; }
   .info-lista { font-size: 12.5px; color: var(--muted); margin: 6px 2px 10px; }
   .filtros-titulo { display: none; }
 
@@ -340,6 +356,7 @@
   .user-linha { padding: 12px 4px; }
   .user-linha + .user-linha { border-top: 1px solid var(--line); }
   .user-topo { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+  .user-topo > div { min-width: 0; overflow-wrap: anywhere; }
   .user-topo small { display: block; color: var(--muted); font-size: 12.5px; }
   .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
   .tag { font-size: 11.5px; font-weight: 800; padding: 2px 8px; border-radius: 7px; background: var(--bg); color: var(--muted); }
@@ -368,9 +385,35 @@
   details.encerrados summary::-webkit-details-marker { display: none; }
   details.encerrados summary::before { content: "▸ "; } details.encerrados[open] summary::before { content: "▾ "; }
 
+  /* ---------- Toque e mouse ----------
+   * Efeitos de "passar o mouse" só onde existe mouse: no celular eles grudavam depois do toque.
+   * No toque, a resposta vem na hora em que o dedo encosta (:active). */
+  @media (hover: hover) and (pointer: fine) {
+    .btn:hover { filter: brightness(1.05); }
+    table.rel tr:hover td { background: #f6f7fe; }
+    .ev-linha:hover, .etapa:hover, .item:hover { background: #f6f7fe; }
+    .item-olho:hover { background: #f6f7fe; border-color: var(--royal); }
+    .visor-btn:hover { background: rgba(255,255,255,.18); }
+    .chips button:hover, .per-modos button:hover { color: var(--noite); }
+  }
+  @media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
+    .nav button:hover { background: rgba(255,255,255,.07); color: #fff; }
+    .nav .nav-mais:hover { background: var(--amarelo); color: var(--noite); filter: brightness(1.04); }
+  }
+  .item:active, .etapa:active, .ev-linha:active { background: #e9ebfb; }
+  .item-olho:active { background: var(--pri-bg); border-color: var(--royal); }
+  .chips button:active, .per-modos button:active, .seg button:active { background-color: var(--pri-bg); }
+  .chips button.ativo:active, .per-modos button.ativo:active { background-color: var(--noite-2); }
+  .nav button:active { background: var(--pri-bg); }
+  .menu button:active, .g-col:active, .alerta:active { filter: brightness(.96); }
+  button, .btn, label.btn { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation; }
+  @media (min-width: 1024px) { .nav button:active { background: rgba(255,255,255,.12); } }
+
   /* ---------- Modal e toast ---------- */
+  /* Com uma janela aberta, a página de trás não rola (no celular, a rolagem "vazava" para trás) */
+  html.travado, html.travado body { overflow: hidden; }
   .modal { position: fixed; inset: 0; z-index: 50; background: rgba(19,21,62,.55); display: flex; align-items: flex-end; justify-content: center; }
-  .modal-caixa { background: #fff; width: 100%; max-width: 560px; max-height: 92vh; overflow-y: auto; border-radius: 24px 24px 0 0;
+  .modal-caixa { background: #fff; width: 100%; max-width: 560px; max-height: 92vh; max-height: 92dvh; overflow-y: auto; overscroll-behavior: contain; border-radius: 24px 24px 0 0;
     padding: 22px 18px; padding-bottom: max(20px, env(safe-area-inset-bottom)); animation: sobe .22s ease-out; }
   @media (min-width: 640px) { .modal { align-items: center; } .modal-caixa { border-radius: 24px; padding: 24px; } }
   @keyframes sobe { from { transform: translateY(30px); opacity: 0; } }
@@ -396,11 +439,10 @@
   .visor-tit small { opacity: .75; font-size: 12.5px; font-weight: 600; }
   .visor-btn { flex: none; border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.08); color: #fff; border-radius: 12px;
     padding: 9px 14px; font-weight: 800; font-size: 14px; cursor: pointer; text-decoration: none; }
-  .visor-btn:hover { background: rgba(255,255,255,.18); }
-  .visor-corpo { flex: 1; overflow: auto; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 6px 12px 28px;
+  .visor-corpo { flex: 1; overflow: auto; overscroll-behavior: contain; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 6px 12px 28px;
     -webkit-overflow-scrolling: touch; }
   .visor-corpo.zoom { display: block; }
-  .visor-corpo img { max-width: 100%; max-height: calc(100vh - 96px); object-fit: contain; border-radius: 8px; background: #fff; cursor: zoom-in; }
+  .visor-corpo img { max-width: 100%; max-height: calc(100vh - 96px); max-height: calc(100dvh - 96px); object-fit: contain; border-radius: 8px; background: #fff; cursor: zoom-in; }
   .visor-corpo.zoom img { max-width: none; max-height: none; cursor: zoom-out; }
   .visor-corpo canvas { width: 100%; max-width: 900px; height: auto; background: #fff; border-radius: 6px; box-shadow: 0 6px 20px rgba(0,0,0,.35); }
   .visor-msg { color: #fff; text-align: center; margin: auto; display: grid; gap: 14px; justify-items: center; font-weight: 700; max-width: 420px; }
@@ -411,6 +453,9 @@
   .credencial span { display: block; font-size: 12px; color: var(--muted); font-weight: 700; }
   .credencial strong { font-size: 20px; }
   .mono { font-family: ui-monospace, Menlo, Consolas, monospace; letter-spacing: 1px; }
+  .so-leitor { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .toast.erro { display: flex; align-items: center; gap: 10px; border-left-color: var(--sai-forte); padding-right: 8px; }
+  .toast-fechar { flex: none; width: 32px; height: 32px; border: 0; border-radius: 10px; background: rgba(255,255,255,.14); color: #fff; font-size: 14px; cursor: pointer; }
   .toast { position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%); z-index: 60; background: var(--noite); color: #fff;
     padding: 12px 18px; border-radius: 14px; font-size: 14px; font-weight: 700; max-width: calc(100% - 32px);
     box-shadow: 0 10px 30px rgba(19,21,62,.4); border-left: 5px solid var(--amarelo); }
@@ -418,11 +463,8 @@
   /* ---------- Início: ordem no celular ---------- */
   .inicio-grid { display: flex; flex-direction: column; }
   .inicio-col { display: contents; }
-  .o1 { order: 1; } .o2 { order: 2; } .o3 { order: 3; } .o4 { order: 4; } .o5 { order: 5; }
-  .o6 { order: 6; } .o7 { order: 7; } .o8 { order: 8; } .o9 { order: 9; } .o10 { order: 10; }
   .ext-grid { display: flex; flex-direction: column; }
   .ext-col { display: contents; }
-  .ext-chips { order: 1; } .ext-busca { order: 2; } #e-filtros { order: 3; } .ext-resto { order: 4; }
 
   /* ============================================================
    *  COMPUTADOR: barra lateral com o logo + painel em tela cheia
@@ -444,12 +486,12 @@
     .nav-marca::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--faixa); }
     .nav button { flex: none; max-width: none; width: 100%; flex-direction: row; gap: 12px; padding: 12px 14px; border-radius: 12px;
       font-size: 15px; color: rgba(255,255,255,.72); margin-bottom: 2px; position: relative; }
-    .nav button:hover { background: rgba(255,255,255,.07); color: #fff; }
+    .nav :focus-visible { outline-color: var(--amarelo); }
     .nav button.ativo { background: rgba(255,255,255,.12); color: #fff; }
     .nav button.ativo::before { content: ""; position: absolute; left: -14px; top: 9px; bottom: 9px; width: 5px; border-radius: 0 4px 4px 0; background: var(--amarelo); }
     .nav button svg { width: 22px; height: 22px; }
     .nav .nav-mais { order: -1; margin-bottom: 14px; background: var(--amarelo); color: var(--noite); justify-content: center; font-weight: 800; }
-    .nav .nav-mais:hover, .nav .nav-mais.ativo { background: var(--amarelo); color: var(--noite); filter: brightness(1.04); }
+    .nav .nav-mais.ativo { background: var(--amarelo); color: var(--noite); filter: brightness(1.04); }
     .nav .nav-mais.ativo::before { display: none; }
     .nav .nav-mais .bola { width: auto; height: auto; margin: 0; background: none; box-shadow: none; transform: none; color: var(--noite); }
     .nav .nav-mais .bola svg { transform: none; }
@@ -558,7 +600,7 @@
         <label>Repita a nova senha<input id="t-conf" type="password" autocomplete="new-password" required></label>
         <p class="erro" id="t-erro"></p>
         <button class="btn pri cheio" type="submit">Salvar senha</button>
-        <button class="btn link cheio" type="button" id="t-cancelar">Cancelar</button>
+        <button class="btn link cheio" type="button" id="t-cancelar">Voltar</button>
       </div>
     </form>
   </div>
@@ -616,7 +658,7 @@
           </div>
           <div class="cartao o9" id="r-anos-card" hidden>
             <h3>Resumo por ano</h3>
-            <table class="anos" id="r-anos"></table>
+            <div class="tabela-wrap"><table class="anos" id="r-anos"></table></div>
           </div>
         </div>
         <div class="inicio-col">
@@ -684,7 +726,7 @@
             <div class="linha2 per-datas" hidden><label>De<input type="date" id="e-de"></label><label>Até<input type="date" id="e-ate"></label></div>
           </div>
           <div class="busca-linha ext-busca">
-        <input id="e-busca" type="search" placeholder="Buscar descrição, valor, ID...">
+        <input id="e-busca" type="search" aria-label="Buscar no extrato" placeholder="Buscar descrição, valor, ID...">
         <button class="btn sec" id="e-btn-filtros" type="button">Filtros <span class="badge" id="e-qtd-filtros" hidden></span></button>
       </div>
           <div class="ext-resto">
@@ -777,7 +819,7 @@
         <h3>Eventos</h3>
         <p class="dica" style="margin-top:0">Um evento por edição, com o ano: ex.: Encontrão (2027). Encerre quando terminar para ele sair da lista de lançamento.</p>
         <form id="a-form-evento" class="nova-cat" style="grid-template-columns:1fr;margin:0 0 8px">
-          <input id="a-evento-nome" placeholder="Novo evento" maxlength="60">
+          <input id="a-evento-nome" aria-label="Nome do novo evento" placeholder="Novo evento" maxlength="60">
           <button class="btn pri" type="submit">Adicionar evento</button>
         </form>
         <button type="button" class="btn sec cheio" id="btn-resumo-evento" style="margin-bottom:10px">Registrar evento por resumo (sem lançamentos)</button>
@@ -790,9 +832,9 @@
         <p class="dica" style="margin-top:0">Bancos e caixa em dinheiro.</p>
         <div id="a-contas"></div>
         <form id="a-form-conta" class="nova-cat">
-          <input id="a-conta-nome" placeholder="Nova conta (ex.: Nubank)" maxlength="40">
-          <select id="a-conta-tipo"><option>Banco</option><option>Espécie</option></select>
-          <input id="a-conta-saldo" inputmode="numeric" placeholder="Saldo inicial R$ 0,00" style="grid-column:1/-1">
+          <input id="a-conta-nome" aria-label="Nome da nova conta" placeholder="Nova conta (ex.: Nubank)" maxlength="40">
+          <select id="a-conta-tipo" aria-label="Tipo da nova conta"><option>Banco</option><option>Espécie</option></select>
+          <input id="a-conta-saldo" aria-label="Saldo inicial da nova conta" inputmode="numeric" placeholder="Saldo inicial R$ 0,00" style="grid-column:1/-1">
           <button class="btn sec" type="submit">Adicionar conta</button>
         </form>
       </div>
@@ -800,7 +842,7 @@
       <div class="cartao">
         <h3>Usuários</h3>
         <form id="a-form-user">
-          <label>Nome<input id="a-nome" placeholder="Ex.: Maria Souza"></label>
+          <label>Nome<input id="a-nome" maxlength="60" placeholder="Ex.: Maria Souza"></label>
           <label>Usuário (login)<input id="a-usuario" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Ex.: maria.souza"></label>
           <p class="dica">O app gera uma senha provisória. A pessoa cria a própria senha no primeiro acesso.</p>
           <p class="erro" id="a-erro"></p>
@@ -813,8 +855,8 @@
         <h3>Categorias</h3>
         <div id="a-cats"></div>
         <form id="a-form-cat" class="nova-cat">
-          <input id="a-cat-nome" placeholder="Nova categoria" maxlength="60">
-          <select id="a-cat-tipo"><option>Saída</option><option>Entrada</option><option>Ambos</option></select>
+          <input id="a-cat-nome" aria-label="Nome da nova categoria" placeholder="Nova categoria" maxlength="60">
+          <select id="a-cat-tipo" aria-label="Tipo da nova categoria"><option>Saída</option><option>Entrada</option><option>Ambos</option></select>
           <button class="btn sec" type="submit">Adicionar categoria</button>
         </form>
       </div>
@@ -872,7 +914,7 @@
   </nav>
 </div>
 
-<div id="modal" class="modal" hidden><div class="modal-caixa" id="modal-corpo"></div></div>
+<div id="modal" class="modal" hidden><div class="modal-caixa" id="modal-corpo" role="dialog" aria-modal="true" tabindex="-1"></div></div>
 <div id="visor" class="visor" hidden role="dialog" aria-modal="true" aria-label="Comprovante">
   <div class="visor-barra">
     <div class="visor-tit"><strong id="visor-tit">Comprovante</strong><small id="visor-sub"></small></div>
@@ -882,6 +924,8 @@
   <div class="visor-corpo" id="visor-corpo"></div>
 </div>
 <div id="toast" class="toast" hidden></div>
+<div id="anuncio" class="so-leitor" role="status"></div>
+<div id="anuncio-erro" class="so-leitor" role="alert"></div>
 
 <script>
 /* ============================================================
@@ -926,7 +970,11 @@ const S = {
 function guardar(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} }
 function ler(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 
-const fmtBRL = v => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+// Dinheiro na tela: as contas são feitas em centavos inteiros. Em ponto flutuante, 44,10 + 0,70 dá
+// 44,800000000000004 e um evento no zero a zero aparecia como "-R$ 0,00" (prejuízo).
+const centavos = v => Math.round(Number(v || 0) * 100);
+const somar = (...valores) => valores.reduce((t, v) => t + centavos(v), 0) / 100;
+const fmtBRL = v => (centavos(v) / 100 || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const pad = n => String(n).padStart(2, '0');
 const ehAdmin = () => S.usuario && S.usuario.perfil === 'admin';
@@ -971,7 +1019,7 @@ function api(fn, ...args) {
 }
 
 function mostrarErro(seletor, e) { if (!e.tratado) $(seletor).textContent = e.message; }
-function avisarErro(e) { if (!e.tratado) toast(e.message); }
+function avisarErro(e) { if (!e.tratado) toast(e.message, true); }
 
 function ocupado(btn, sim, texto) {
   if (sim) { btn.dataset.txt = btn.innerHTML; btn.disabled = true; if (texto) btn.textContent = texto; }
@@ -979,19 +1027,51 @@ function ocupado(btn, sim, texto) {
 }
 
 let toastTimer;
-function toast(msg) {
+/* Avisos rápidos. Sucesso: some em 3 segundos. Erro: fica até a pessoa fechar (ou até o próximo aviso).
+ * Os dois são lidos pelo leitor de tela, por regiões que ficam sempre na página (#anuncio e #anuncio-erro). */
+function toast(msg, erro) {
   const t = $('#toast');
-  t.textContent = msg; t.hidden = false;
+  t.innerHTML = '';
+  const texto = document.createElement('span'); texto.textContent = msg; t.appendChild(texto);
+  t.classList.toggle('erro', !!erro);
+  if (erro) {
+    const x = document.createElement('button');
+    x.type = 'button'; x.className = 'toast-fechar'; x.textContent = '✕'; x.setAttribute('aria-label', 'Fechar aviso');
+    x.onclick = () => { t.hidden = true; };
+    t.appendChild(x);
+  }
+  t.hidden = false;
+  const regiao = $(erro ? '#anuncio-erro' : '#anuncio');
+  regiao.textContent = '';
+  setTimeout(() => { regiao.textContent = msg; }, 60);
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.hidden = true; }, 3200);
+  if (!erro) toastTimer = setTimeout(() => { t.hidden = true; }, 3200);
 }
 
-function abrirModal(html) { $('#modal-corpo').innerHTML = html; $('#modal').hidden = false; $('#modal-corpo').scrollTop = 0; }
+/* Janelas: anunciadas como diálogo, com o título como nome. Enquanto abertas, o resto do app fica inerte
+ * (Tab e leitor de tela não vão para trás) e, ao fechar, o foco volta para onde estava. */
+let focoAntesModal = null;
+function abrirModal(html) {
+  const caixa = $('#modal-corpo');
+  if ($('#modal').hidden) focoAntesModal = document.activeElement;
+  caixa.innerHTML = html; $('#modal').hidden = false; caixa.scrollTop = 0;
+  const titulo = caixa.querySelector('h3, .det-topo');
+  if (titulo) { titulo.id = titulo.id || 'modal-titulo'; caixa.setAttribute('aria-labelledby', titulo.id); }
+  else caixa.removeAttribute('aria-labelledby');
+  $('#app').inert = true;
+  document.documentElement.classList.add('travado');
+  caixa.focus({ preventScroll: true });
+}
 let aoFecharModal = null;
 function fecharModal() {
+  const estavaAberto = !$('#modal').hidden;
   $('#modal').hidden = true; $('#modal-corpo').innerHTML = '';
+  $('#app').inert = false;
+  if ($('#visor').hidden) document.documentElement.classList.remove('travado');
   const f = aoFecharModal; aoFecharModal = null;
   if (f) f();
+  if (estavaAberto && focoAntesModal && document.contains(focoAntesModal) && $('#modal').hidden) focoAntesModal.focus({ preventScroll: true });
+  if ($('#modal').hidden) focoAntesModal = null;
 }
 
 function confirmar(titulo, texto, botao, classe) {
@@ -1010,7 +1090,7 @@ async function copiar(texto) {
   const ta = document.createElement('textarea');
   ta.value = texto; ta.style.position = 'fixed'; ta.style.opacity = '0';
   document.body.appendChild(ta); ta.select();
-  try { document.execCommand('copy'); toast('Copiado!'); } catch (e) { toast('Não foi possível copiar. Selecione o texto manualmente.'); }
+  try { document.execCommand('copy'); toast('Copiado!'); } catch (e) { toast('Não foi possível copiar. Selecione o texto manualmente.', true); }
   ta.remove();
 }
 
@@ -1095,7 +1175,7 @@ function mostrarTela(nome) {
 function irPara(v, opcoes = {}) {
   if (v === 'admin' && !ehAdmin()) v = 'inicio';
   $$('.view').forEach(s => { s.hidden = s.id !== 'v-' + v; });
-  $$('.nav button').forEach(b => b.classList.toggle('ativo', b.dataset.view === v));
+  $$('.nav button').forEach(b => { const sim = b.dataset.view === v; b.classList.toggle('ativo', sim); if (sim) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
   $('#menu').hidden = true;
   window.scrollTo(0, 0);
   if (opcoes.semRecarregar) return;
@@ -1235,7 +1315,7 @@ function renderResumo(r) {
   if (!$('#v-admin').hidden && S.contas.length) aplicarContas(S.contas);
   $('#n-data').min = r.abertura ? r.abertura.data : '';
   $('#r-contas').innerHTML = (r.contas || []).map(c =>
-    `<div><span>${esc(c.conta)}</span><span>${fmtBRL(c.saldo)}</span></div>`).join('');
+    `<div><span>${nomeConta(c)}</span><span>${fmtBRL(c.saldo)}</span></div>`).join('');
   $('#r-mes').textContent = r.mesRotulo;
   $('#r-ent').textContent = fmtBRL(r.entradasMes);
   $('#r-sai').textContent = fmtBRL(r.saidasMes);
@@ -1245,7 +1325,7 @@ function renderResumo(r) {
   resEl.className = res > 0 ? 'c-ent' : res < 0 ? 'c-sai' : '';
   $('#r-ent-cmp').textContent = comparar(r.entradasMes, r.entradasMesAnt);
   $('#r-sai-cmp').textContent = comparar(r.saidasMes, r.saidasMesAnt);
-  $('#r-res-cmp').textContent = 'mês anterior: ' + fmtBRL(r.entradasMesAnt - r.saidasMesAnt);
+  $('#r-res-cmp').textContent = 'mês anterior: ' + fmtBRL(somar(r.entradasMesAnt, -r.saidasMesAnt));
 
   $('#r-alerta').innerHTML = r.semComprovante
     ? `<button class="alerta" type="button" id="btn-sem-comp">⚠️ <span>${r.semComprovante} saída${r.semComprovante > 1 ? 's' : ''} sem comprovante. Toque para ver e anexar.</span></button>`
@@ -1272,10 +1352,12 @@ function renderResumo(r) {
   const anos = r.anos || [];
   $('#r-anos-card').hidden = !anos.length;
   $('#r-anos').innerHTML = '<tr><th>Ano</th><th>Entradas</th><th>Saídas</th><th>Resultado</th></tr>' + anos.map(a => {
-    const res = a.entradas - a.saidas;
+    const res = somar(a.entradas, -a.saidas);
     return `<tr><td>${esc(a.ano)}</td><td class="c-ent">${fmtBRL(a.entradas)}</td><td class="c-sai">${fmtBRL(a.saidas)}</td>
-      <td class="${res >= 0 ? 'c-ent' : 'c-sai'}">${fmtBRL(res)}</td></tr>`;
+      <td class="${corRes(res)}">${fmtBRL(res)}</td></tr>`;
   }).join('');
+  delete $('#r-anos').dataset.rotulada;
+  ajustarTabelas($('#r-anos-card'));
 
   invalidarRelatorios();
   r.ultimos.forEach(l => { S.cache[l.id] = l; });
@@ -1443,7 +1525,7 @@ function contaPelaForma() {
 function escolherTipo(tipo) {
   S.tipoNovo = tipo;
   const trf = tipo === 'Transferência';
-  $$('#n-tipo button').forEach(b => b.classList.toggle('ativo', b.dataset.tipo === tipo));
+  $$('#n-tipo button').forEach(b => { b.classList.toggle('ativo', b.dataset.tipo === tipo); b.setAttribute('aria-pressed', String(b.dataset.tipo === tipo)); });
   $('#form-novo').dataset.tipo = tipo;
   $('#n-salvar').className = 'btn cheio ' + (tipo === 'Entrada' ? 'ent' : tipo === 'Saída' ? 'sai' : 'pri');
   $('#n-salvar').textContent = tipo === 'Entrada' ? 'Salvar entrada' : tipo === 'Saída' ? 'Salvar saída' : 'Salvar transferência';
@@ -1486,7 +1568,7 @@ async function arquivoEscolhido(input) {
   input.value = '';
   if (!f) return null;
   try { return await prepararArquivo(f); }
-  catch (e) { toast(e.message); return null; }
+  catch (e) { toast(e.message, true); return null; }
 }
 
 async function salvarNovo(ev) {
@@ -1569,7 +1651,7 @@ function novoEventoRapido() {
     <label>Nome do evento<input id="ne-nome" maxlength="60"></label>
     <p class="erro" id="ne-erro"></p>
     <button type="button" class="btn pri cheio" id="ne-ok">Criar e usar neste lançamento</button>
-    <button type="button" class="btn link cheio" data-fechar>Cancelar</button>`);
+    <button type="button" class="btn link cheio" data-fechar>Voltar</button>`);
   setTimeout(() => $('#ne-nome').focus(), 50);
   $('#ne-ok').onclick = async () => {
     const nome = $('#ne-nome').value.trim();
@@ -1626,7 +1708,7 @@ function aplicarPeriodo(id, avisar = true) {
 function renderPeriodo(id) {
   const p = PER[id], el = p.el;
   const [aH, mH] = S.hoje.split('-').map(Number);
-  $$('.per-modos button', el).forEach(b => b.classList.toggle('ativo', b.dataset.perModo === p.modo));
+  $$('.per-modos button', el).forEach(b => { b.classList.toggle('ativo', b.dataset.perModo === p.modo); b.setAttribute('aria-pressed', String(b.dataset.perModo === p.modo)); });
   $('.per-datas', el).hidden = p.modo !== 'intervalo';
   const selAno = `<select class="per-ano" aria-label="Ano">${anosPeriodo().map(a => `<option value="${a}"${a === p.ano ? ' selected' : ''}>${a}</option>`).join('')}</select>`;
   const noFim = p.modo === 'ano' ? p.ano >= aH : (p.ano > aH || (p.ano === aH && p.mes >= mH));
@@ -1709,7 +1791,17 @@ async function carregarExtrato() {
 async function mostrarMais() {
   const ex = S.extrato;
   if (!ex.itens.length) {
-    $('#e-lista').innerHTML = '<div class="vazio">Nenhum lançamento encontrado com esses filtros.</div>';
+    // Diz onde procurou e, se houver busca ou filtro, oferece o caminho de volta
+    const f = filtrosAtuais(), busca = $('#e-busca').value.trim();
+    const temFiltro = !!busca || [f.tipo, f.categoria, f.comprovante, f.evento, f.conta].some(Boolean) || f.status !== 'ativos';
+    const per = descricaoPeriodo('e-per');
+    const onde = per === 'Todo o histórico' ? 'em todo o histórico' : / a /.test(per) ? `de ${per}` : `em ${per}`;
+    $('#e-lista').innerHTML = temFiltro
+      ? `<div class="vazio">Nenhum lançamento ${busca ? `com “${esc(busca)}”` : 'com esses filtros'} ${esc(onde)}.<br>
+          <button type="button" class="btn sec peq" id="e-vazio-limpar" style="margin-top:10px">Limpar filtros</button></div>`
+      : `<div class="vazio">Nenhum lançamento ${esc(onde)}.</div>`;
+    const limpar = $('#e-vazio-limpar');
+    if (limpar) limpar.onclick = () => $('#e-limpar').click();
     $('#e-mais').hidden = true;
     return;
   }
@@ -1821,10 +1913,16 @@ async function buscarComprovante(id) {
 }
 
 function fecharVisor() {
+  const estavaAberto = !$('#visor').hidden;
   $('#visor').hidden = true;
   $('#visor-corpo').innerHTML = '';
   VISOR.atual = null;
   if (VISOR.url) { URL.revokeObjectURL(VISOR.url); VISOR.url = null; }
+  $('#modal').inert = false;
+  $('#app').inert = !$('#modal').hidden;
+  document.documentElement.classList.toggle('travado', !$('#modal').hidden);
+  if (estavaAberto && VISOR.focoAntes && document.contains(VISOR.focoAntes)) VISOR.focoAntes.focus({ preventScroll: true });
+  VISOR.focoAntes = null;
 }
 
 function visorMensagem(texto, comBaixar) {
@@ -1846,7 +1944,11 @@ async function abrirVisor(id) {
   const corpo = $('#visor-corpo');
   corpo.classList.remove('zoom');
   corpo.innerHTML = '<div class="visor-msg"><div class="spinner"></div><span>Carregando comprovante...</span></div>';
+  if ($('#visor').hidden) VISOR.focoAntes = document.activeElement;
   $('#visor').hidden = false;
+  $('#app').inert = true; $('#modal').inert = true;
+  document.documentElement.classList.add('travado');
+  $('#visor-fechar').focus({ preventScroll: true });
   let c;
   try { c = await buscarComprovante(id); }
   catch (e) {
@@ -2016,7 +2118,27 @@ function grafico(cfg) {
     <div class="gsvg" data-g="${id}" style="height:${cfg.altura || 220}px"></div>`;
 }
 
+/* Tabelas: dá a cada célula o nome da sua coluna e, se a tabela não couber na largura disponível,
+ * passa a mostrar cada linha como um bloco. Recalcula ao redimensionar (desenharGraficos é chamada no resize). */
+function ajustarTabelas(raiz) {
+  $$('.tabela-wrap table', raiz || document).forEach(t => {
+    if (!t.dataset.rotulada) {
+      let cab = [];
+      Array.from(t.rows).forEach(tr => {
+        if (tr.querySelector('th')) { cab = Array.from(tr.cells).map(c => c.textContent.trim()); tr.classList.add('cab'); return; }
+        Array.from(tr.cells).forEach((td, i) => { if (cab[i]) td.dataset.rotulo = cab[i]; });
+      });
+      t.dataset.rotulada = '1';
+    }
+    const wrap = t.parentElement;
+    if (!wrap.clientWidth) return;
+    t.classList.remove('empilhada');
+    if (t.scrollWidth > wrap.clientWidth + 1) t.classList.add('empilhada');
+  });
+}
+
 function desenharGraficos(raiz) {
+  ajustarTabelas(raiz);
   $$('.gsvg', raiz || document).forEach(el => {
     const cfg = GRAF[el.dataset.g];
     const w = el.clientWidth;
@@ -2177,7 +2299,9 @@ function variacao(atual, anterior, gasto) {
   const ruim = gasto ? p > 0 : p < 0;
   return `<span class="${ruim ? 'var-up' : 'var-down'}">${p > 0 ? '▲' : '▼'} ${Math.abs(p)}%</span>`;
 }
-const corRes = v => v >= 0 ? 'c-ent' : 'c-sai';
+// Conta que não está mais na aba Contas (renomeada ou apagada direto na planilha)
+const nomeConta = c => esc(c.conta) + (c.orfa ? ' <small class="orfa">(conta não cadastrada)</small>' : '');
+const corRes = v => centavos(v) >= 0 ? 'c-ent' : 'c-sai';
 // Crescimento médio anual entre a primeira e a última edição
 function crescimentoMedio(pontos) {
   const v = pontos.filter(p => p.valor > 0);
@@ -2189,7 +2313,7 @@ function crescimentoMedio(pontos) {
 
 function renderRel() {
   if (REL.secao === 'evento') REL.secao = 'eventos';
-  $$('#rel-secoes button').forEach(b => b.classList.toggle('ativo', b.dataset.s === REL.secao));
+  $$('#rel-secoes button').forEach(b => { b.classList.toggle('ativo', b.dataset.s === REL.secao); b.setAttribute('aria-pressed', String(b.dataset.s === REL.secao)); });
   $('#rel-secoes button[data-s="eventos"]').textContent = REL.evento ? 'Painel do evento' : 'Eventos';
   const sec = REL.secao, comp = sec === 'comparativo';
   const nomeEv = REL.evento ? (REL.evento === SEM_EVENTO ? 'Dia a dia do grupo (sem evento)' : REL.evento) : '';
@@ -2301,7 +2425,7 @@ async function relEventoDetalhe() {
 
 function agruparCategorias(itens) {
   const m = {};
-  itens.forEach(l => { const c = m[l.categoria] = m[l.categoria] || { categoria: l.categoria, valor: 0, itens: [] }; c.valor += l.valor; c.itens.push(l); });
+  itens.forEach(l => { const c = m[l.categoria] = m[l.categoria] || { categoria: l.categoria, valor: 0, itens: [] }; c.valor = somar(c.valor, l.valor); c.itens.push(l); });
   return Object.values(m).sort((a, b) => b.valor - a.valor);
 }
 
@@ -2322,7 +2446,7 @@ function htmlEventoDetalhe(d) {
   itens.forEach(l => { S.cache[l.id] = l; });
   if (!itens.length) return '<div class="cartao vazio largo">Nenhum lançamento neste evento ainda.</div>';
   const ent = itens.filter(l => l.tipo === 'Entrada'), sai = itens.filter(l => l.tipo === 'Saída');
-  const tE = ent.reduce((t, l) => t + l.valor, 0), tS = sai.reduce((t, l) => t + l.valor, 0), res = tE - tS;
+  const tE = somar(...ent.map(l => l.valor)), tS = somar(...sai.map(l => l.valor)), res = somar(tE, -tS);
   const datas = itens.map(l => l.data).sort();
   const pend = sai.filter(l => !l.temComprovante && !l.historico && !l.resumo).length;
   const resumos = itens.filter(l => l.resumo).length;
@@ -2370,13 +2494,13 @@ function htmlEventoDetalhe(d) {
   if (dias.length > 1) {
     let aE = 0, aS = 0;
     const porDia = {};
-    itens.forEach(l => { const o = porDia[l.data] = porDia[l.data] || { e: 0, s: 0 }; if (l.tipo === 'Entrada') o.e += l.valor; else o.s += l.valor; });
+    itens.forEach(l => { const o = porDia[l.data] = porDia[l.data] || { e: 0, s: 0 }; if (l.tipo === 'Entrada') o.e = somar(o.e, l.valor); else o.s = somar(o.s, l.valor); });
     const vE = [], vS = [];
-    dias.forEach(dia => { aE += porDia[dia].e; aS += porDia[dia].s; vE.push(Math.round(aE * 100) / 100); vS.push(Math.round(aS * 100) / 100); });
+    dias.forEach(dia => { aE = somar(aE, porDia[dia].e); aS = somar(aS, porDia[dia].s); vE.push(aE); vS.push(aS); });
     html += `<div class="cartao largo"><h3>Como o dinheiro entrou e saiu ao longo do evento</h3>
       ${grafico({ tipo: 'linha', titulo: 'Entradas e saídas acumuladas', zero: true, rotulos: dias.map(x => brData(x).slice(0, 5)), rotulosLongos: dias.map(brData),
         series: [{ nome: 'Entradas acumuladas', cor: COR.ent, valores: vE }, { nome: 'Saídas acumuladas', cor: COR.sai, valores: vS }],
-        extraDica: i => `<div class="g-sub">Resultado até aqui: <b>${fmtBRL(vE[i] - vS[i])}</b></div>` })}
+        extraDica: i => `<div class="g-sub">Resultado até aqui: <b>${fmtBRL(somar(vE[i], -vS[i]))}</b></div>` })}
       <p class="dica" style="margin:8px 0 0">Quando a linha verde passa da vermelha, o evento já se pagou.</p></div>`;
   }
 
@@ -2388,16 +2512,16 @@ function htmlEventoDetalhe(d) {
         series: [{ nome: 'Entradas', cor: COR.ent, valores: eds.map(e => e.entradas) }, { nome: 'Saídas', cor: COR.sai, valores: eds.map(e => e.saidas) }] })}
       <div class="tabela-wrap"><table class="rel"><tr><th>Edição</th><th>Saídas</th><th>Variação</th><th>Resultado</th></tr>
         ${eds.map((e, i) => `<tr${i === idx ? ' class="atual"' : ''}><td>${esc(e.ano)}${e.aberta ? ' <small>(em andamento)</small>' : ''}</td><td class="c-sai">${fmtBRL(e.saidas)}</td>
-          <td>${i ? variacao(e.saidas, eds[i - 1].saidas, true) : ''}</td><td class="${corRes(e.entradas - e.saidas)}">${fmtBRL(e.entradas - e.saidas)}</td></tr>`).join('')}
+          <td>${i ? variacao(e.saidas, eds[i - 1].saidas, true) : ''}</td><td class="${corRes(somar(e.entradas, -e.saidas))}">${fmtBRL(somar(e.entradas, -e.saidas))}</td></tr>`).join('')}
       </table></div>
       ${cm != null ? `<p class="dica" style="margin:10px 0 0">${cm >= 0 ? 'Aumento' : 'Queda'} média do custo: <strong>${numPct(cm)} ao ano</strong>${eds.some(e => e.aberta) ? ' (edições em andamento ficam de fora)' : ''}.</p>` : ''}</div>`;
   }
 
   // contas e formas de pagamento
   const porConta = {};
-  itens.forEach(l => { const k = l.conta || '—'; const o = porConta[k] = porConta[k] || { e: 0, s: 0 }; if (l.tipo === 'Entrada') o.e += l.valor; else o.s += l.valor; });
+  itens.forEach(l => { const k = l.conta || '—'; const o = porConta[k] = porConta[k] || { e: 0, s: 0 }; if (l.tipo === 'Entrada') o.e = somar(o.e, l.valor); else o.s = somar(o.s, l.valor); });
   const porForma = {};
-  itens.forEach(l => { const k = l.forma || '—'; const o = porForma[k] = porForma[k] || { e: 0, s: 0 }; if (l.tipo === 'Entrada') o.e += l.valor; else o.s += l.valor; });
+  itens.forEach(l => { const k = l.forma || '—'; const o = porForma[k] = porForma[k] || { e: 0, s: 0 }; if (l.tipo === 'Entrada') o.e = somar(o.e, l.valor); else o.s = somar(o.s, l.valor); });
   const tab = (titulo, obj) => `<tr><th>${titulo}</th><th>Entradas</th><th>Saídas</th></tr>` +
     Object.keys(obj).sort().map(k => `<tr><td>${esc(k)}</td><td class="c-ent">${fmtBRL(obj[k].e)}</td><td class="c-sai">${fmtBRL(obj[k].s)}</td></tr>`).join('');
   html += `<div class="cartao"><h3>Por conta e forma de pagamento</h3><div class="tabela-wrap"><table class="rel">${tab('Conta', porConta)}</table></div>
@@ -2452,7 +2576,7 @@ async function relCurvaSaldo() {
         <div><span>Saldo atual</span><strong>${fmtBRL(atual.saldo)}</strong></div>
         <div><span>Maior saldo</span><strong>${fmtBRL(maior.saldo)}</strong><small>${esc(maior.rotulo)}</small></div>
         <div><span>Menor saldo</span><strong>${fmtBRL(menor.saldo)}</strong><small>${esc(menor.rotulo)}</small></div>
-        <div><span>Em 12 meses</span><strong class="${ha12 ? corRes(atual.saldo - ha12.saldo) : ''}">${ha12 ? (atual.saldo - ha12.saldo >= 0 ? '+' : '−') + fmtBRL(Math.abs(atual.saldo - ha12.saldo)) : '—'}</strong></div>
+        <div><span>Em 12 meses</span><strong class="${ha12 ? corRes(somar(atual.saldo, -ha12.saldo)) : ''}">${ha12 ? (centavos(somar(atual.saldo, -ha12.saldo)) >= 0 ? '+' : '−') + fmtBRL(Math.abs(somar(atual.saldo, -ha12.saldo))) : '—'}</strong></div>
       </div>
       ${grafico({ tipo: 'linha', titulo: 'Saldo acumulado por mês', altura: 260, rotulos: m.map(x => x.rotulo), rotulosLongos: m.map(rotLongo),
         series: [{ nome: 'Saldo no fim do mês', cor: COR.saldo, valores: m.map(x => x.saldo), area: true }],
@@ -2548,7 +2672,7 @@ function relMensal(r) {
     <div class="tabela-wrap" style="margin-top:10px"><table class="rel">
     <tr><th>Mês</th><th>Entradas</th><th>Saídas</th><th>Resultado</th><th>Acumulado</th></tr>
     ${r.mensal.map(m => {
-      const res = m.entradas - m.saidas; acum += res;
+      const res = somar(m.entradas, -m.saidas); acum = somar(acum, res);
       return `<tr><td>${esc(m.rotulo)}</td><td class="c-ent">${fmtBRL(m.entradas)}</td><td class="c-sai">${fmtBRL(m.saidas)}</td>
         <td class="${corRes(res)}">${fmtBRL(res)}</td><td class="${corRes(acum)}">${fmtBRL(acum)}</td></tr>`;
     }).join('')}
@@ -2558,21 +2682,21 @@ function relMensal(r) {
 }
 
 function relContas(r) {
-  const total = r.porConta.reduce((t, c) => t + c.saldoAtual, 0);
+  const total = somar(...r.porConta.map(c => c.saldoAtual));
   if (r.evento) {
     const usadas = r.porConta.filter(c => c.entradas || c.saidas);
     return `<div class="cartao"><h3>Movimento por conta</h3>${usadas.length ? `<div class="tabela-wrap"><table class="rel">
       <tr><th>Conta</th><th>Entradas</th><th>Saídas</th><th>Resultado</th></tr>
-      ${usadas.map(c => `<tr><td>${esc(c.conta)}</td><td class="c-ent">${fmtBRL(c.entradas)}</td><td class="c-sai">${fmtBRL(c.saidas)}</td><td class="${corRes(c.entradas - c.saidas)}">${fmtBRL(c.entradas - c.saidas)}</td></tr>`).join('')}
+      ${usadas.map(c => `<tr><td>${nomeConta(c)}</td><td class="c-ent">${fmtBRL(c.entradas)}</td><td class="c-sai">${fmtBRL(c.saidas)}</td><td class="${corRes(somar(c.entradas, -c.saidas))}">${fmtBRL(somar(c.entradas, -c.saidas))}</td></tr>`).join('')}
     </table></div>` : '<div class="vazio">Nenhum lançamento no filtro escolhido.</div>'}
     <p class="dica" style="margin:8px 0 0">O saldo de cada conta aparece com o filtro "Todos os eventos".</p></div>`;
   }
   return `<div class="cartao"><h3>Saldo atual por conta</h3>
-    ${r.porConta.map(c => `<div class="cat-admin"><div><strong>${esc(c.conta)}</strong> <span class="tag">${esc(c.tipo)}</span></div><strong>${fmtBRL(c.saldoAtual)}</strong></div>`).join('')}
+    ${r.porConta.map(c => `<div class="cat-admin"><div><strong>${nomeConta(c)}</strong>${c.tipo ? ` <span class="tag">${esc(c.tipo)}</span>` : ''}</div><strong>${fmtBRL(c.saldoAtual)}</strong></div>`).join('')}
     <div class="cat-admin"><div><strong>Total</strong></div><strong>${fmtBRL(total)}</strong></div></div>
     <div class="cartao"><h3>Movimento no período</h3><div class="tabela-wrap"><table class="rel">
       <tr><th>Conta</th><th>Entradas</th><th>Saídas</th><th>Transf. recebidas</th><th>Transf. enviadas</th></tr>
-      ${r.porConta.map(c => `<tr><td>${esc(c.conta)}</td><td class="c-ent">${fmtBRL(c.entradas)}</td><td class="c-sai">${fmtBRL(c.saidas)}</td>
+      ${r.porConta.map(c => `<tr><td>${nomeConta(c)}</td><td class="c-ent">${fmtBRL(c.entradas)}</td><td class="c-sai">${fmtBRL(c.saidas)}</td>
         <td class="c-trf">${fmtBRL(c.transfEntrada)}</td><td class="c-trf">${fmtBRL(c.transfSaida)}</td></tr>`).join('')}
     </table></div></div>`;
 }
@@ -2604,7 +2728,7 @@ async function carregarProjecoes() {
 
 function renderParamProjecao() {
   const d = PROJ.dados;
-  $('#pj-anos').innerHTML = d.anos.map(a => `<button type="button" data-pj-ano="${a.ano}" class="${PROJ.anos.includes(a.ano) ? 'ativo' : ''}">
+  $('#pj-anos').innerHTML = d.anos.map(a => `<button type="button" data-pj-ano="${a.ano}" class="${PROJ.anos.includes(a.ano) ? 'ativo' : ''}" aria-pressed="${PROJ.anos.includes(a.ano)}">
     ${a.ano}${a.ano === d.anoAtual ? '*' : ''} <small>${a.meses} ${a.meses === 1 ? 'mês' : 'meses'}</small></button>`).join('');
   $('#pj-metodo').value = PROJ.metodo;
   $('#pj-reajuste').value = String(PROJ.reajuste).replace('.', ',');
@@ -2641,10 +2765,11 @@ function renderProjecoes() {
   const projCat = lista => lista.map(c => {
     const pts = base.map(a => ({ ano: Number(a), valor: (c.valores[a] || 0) * fator(a) }));
     const ult = pts[pts.length - 1];
-    return { categoria: c.categoria, ultimo: ult.valor, anoUltimo: ult.ano, proj: projetar(pts, alvo) || 0 };
+    return { categoria: c.categoria, ultimo: somar(ult.valor), anoUltimo: ult.ano, proj: somar(projetar(pts, alvo) || 0) };
   }).filter(c => c.proj > 0.5 || c.ultimo > 0.5).sort((a, b) => b.proj - a.proj);
   const cS = projCat(d.categoriasSaida), cE = projCat(d.categoriasEntrada);
-  const gastos = cS.reduce((t, c) => t + c.proj, 0), arrec = cE.reduce((t, c) => t + c.proj, 0), res = arrec - gastos;
+  // Cada previsão é arredondada para centavos antes de somar: assim o total bate com as linhas da tabela
+  const gastos = somar(...cS.map(c => c.proj)), arrec = somar(...cE.map(c => c.proj)), res = somar(arrec, -gastos);
 
   const evs = d.eventos.map(e => {
     const fechadas = e.anos.filter(x => !edicaoAberta(e.evento, x.ano));
@@ -2654,7 +2779,7 @@ function renderProjecoes() {
     const pS = eds.map(x => ({ ano: Number(x.ano), valor: x.saidas })), pE = eds.map(x => ({ ano: Number(x.ano), valor: x.entradas }));
     const ult = fechadas[fechadas.length - 1];
     return { evento: e.evento, ultimo: ult, edicoes: fechadas.length, cresc: crescimentoMedio(fechadas.map(x => ({ ano: x.ano, valor: x.saidas }))),
-      custo: projetar(pS, alvo) || 0, arrec: projetar(pE, alvo) || 0 };
+      custo: somar(projetar(pS, alvo) || 0), arrec: somar(projetar(pE, alvo) || 0) };
   }).filter(Boolean).sort((a, b) => b.custo - a.custo);
 
   const incompletos = base.filter(a => infoAno[a] && infoAno[a].meses < 12);
@@ -2697,7 +2822,7 @@ function renderProjecoes() {
   const tab = (titulo, lista, gasto) => !lista.length ? '' : `<div class="cartao"><h3>${titulo}</h3><div class="tabela-wrap"><table class="rel">
     <tr><th>Categoria</th><th>${lista[0].anoUltimo}</th><th>Previsão ${alvo}</th><th>Variação</th></tr>
     ${lista.map(c => `<tr><td>${esc(c.categoria)}</td><td>${fmtBRL(c.ultimo)}</td><td><b>${fmtBRL(c.proj)}</b></td><td>${variacao(c.proj, c.ultimo, gasto)}</td></tr>`).join('')}
-    <tr class="total"><td>Total</td><td>${fmtBRL(lista.reduce((t, c) => t + c.ultimo, 0))}</td><td>${fmtBRL(lista.reduce((t, c) => t + c.proj, 0))}</td><td></td></tr>
+    <tr class="total"><td>Total</td><td>${fmtBRL(somar(...lista.map(c => c.ultimo)))}</td><td>${fmtBRL(somar(...lista.map(c => c.proj)))}</td><td></td></tr>
   </table></div></div>`;
   html += tab('Gastos previstos por categoria', cS, true);
   html += tab('Arrecadação prevista por categoria', cE, false);
@@ -2708,7 +2833,7 @@ function renderProjecoes() {
       <tr><th>Evento</th><th>Última edição</th><th>Aumento médio</th><th>Custo previsto</th><th>Arrecadação prevista</th><th>Resultado</th></tr>
       ${evs.map(e => `<tr><td>${esc(e.evento)}</td><td>${esc(e.ultimo.ano)}: ${fmtBRL(e.ultimo.saidas)}</td>
         <td>${e.cresc != null ? `<span class="${e.cresc > 0 ? 'var-up' : 'var-down'}">${e.cresc > 0 ? '▲' : '▼'} ${numPct(e.cresc)} ao ano</span>` : '—'}</td>
-        <td class="c-sai"><b>${fmtBRL(e.custo)}</b></td><td class="c-ent">${fmtBRL(e.arrec)}</td><td class="${corRes(e.arrec - e.custo)}">${fmtBRL(e.arrec - e.custo)}</td></tr>`).join('')}
+        <td class="c-sai"><b>${fmtBRL(e.custo)}</b></td><td class="c-ent">${fmtBRL(e.arrec)}</td><td class="${corRes(somar(e.arrec, -e.custo))}">${fmtBRL(somar(e.arrec, -e.custo))}</td></tr>`).join('')}
     </table></div>` : '<div class="vazio">Nenhum evento com edição nos anos-base escolhidos.</div>'}
   </div>
   <p class="dica">Projeção é estimativa: serve para planejar metas e reservas, não é garantia. Ela fica mais precisa conforme o grupo registra tudo pelo app.</p>`;
@@ -2749,14 +2874,14 @@ function abrirResumoEvento() {
     <p class="dica" id="rs-aviso"></p>
     <p class="erro" id="rs-erro"></p>
     <button type="button" class="btn pri cheio" id="rs-salvar">Registrar resumo</button>
-    <button type="button" class="btn link cheio" data-fechar>Cancelar</button>`);
+    <button type="button" class="btn link cheio" data-fechar>Voltar</button>`);
   const caixa = $('#modal-corpo');
   const preparar = () => { $$('.rs-valor', caixa).forEach(inp => { if (!inp.dataset.mask) { mascaraValor(inp); inp.dataset.mask = '1'; } }); };
   const totais = () => {
     let e = 0, s = 0;
-    $$('.rs-linha', caixa).forEach(l => { const v = lerValor($('.rs-valor', l)); if (l.dataset.tipo === 'Entrada') e += v; else s += v; });
+    $$('.rs-linha', caixa).forEach(l => { const v = lerValor($('.rs-valor', l)); if (l.dataset.tipo === 'Entrada') e = somar(e, v); else s = somar(s, v); });
     $('#rs-total').innerHTML = `<div><span>Entradas</span><span class="c-ent">${fmtBRL(e)}</span></div><div><span>Saídas</span><span class="c-sai">${fmtBRL(s)}</span></div>
-      <div class="total"><span>Resultado do evento</span><span class="${corRes(e - s)}">${fmtBRL(e - s)}</span></div>`;
+      <div class="total"><span>Resultado do evento</span><span class="${corRes(somar(e, -s))}">${fmtBRL(somar(e, -s))}</span></div>`;
     const data = $('#rs-data').value;
     $('#rs-aviso').textContent = !data ? '' : ab && data < ab.data
       ? `A data é anterior à abertura do caixa (${ab.dataBR}): o resumo entra nos relatórios e projeções, mas não muda o saldo atual.`
@@ -2882,7 +3007,7 @@ function editarSaldoInicial(nome) {
       : 'Quanto havia nesta conta antes do primeiro lançamento registrado nela.'} Para corrigir o saldo de hoje, prefira um lançamento na categoria "Ajuste de saldo": fica registrado quando e por quê.</p>
     <label>${rotulo}<input id="si-valor" inputmode="numeric"></label>
     <button type="button" class="btn pri cheio" id="si-ok">Salvar</button>
-    <button type="button" class="btn link cheio" data-fechar>Cancelar</button>`);
+    <button type="button" class="btn link cheio" data-fechar>Voltar</button>`);
   const inp = $('#si-valor');
   mascaraValor(inp);
   definirValor(inp, deAbertura ? ab.saldos[nome] : (c ? c.saldoInicial : 0));
@@ -2905,7 +3030,7 @@ function abrirCaixaModal() {
     ${S.contas.some(c => !c.ativa) ? '<p class="dica">Contas desativadas começam a nova fase com saldo zero.</p>' : ''}
     <p class="erro" id="ab-erro"></p>
     <button type="button" class="btn pri cheio" id="ab-revisar">Revisar</button>
-    <button type="button" class="btn link cheio" data-fechar>Cancelar</button>`);
+    <button type="button" class="btn link cheio" data-fechar>Voltar</button>`);
   $$('.ab-valor').forEach(inp => {
     mascaraValor(inp);
     if (ab && Object.prototype.hasOwnProperty.call(ab.saldos, inp.dataset.conta)) definirValor(inp, ab.saldos[inp.dataset.conta]);
@@ -2921,7 +3046,7 @@ function abrirCaixaModal() {
 }
 
 function revisarAbertura(data, saldos) {
-  const total = Object.values(saldos).reduce((t, v) => t + v, 0);
+  const total = somar(...Object.values(saldos));
   const [a, m, d] = data.split('-');
   const dataBR = `${d}/${m}/${a}`;
   abrirModal(`<h3>Confirmar abertura em ${dataBR}</h3>
@@ -3086,7 +3211,25 @@ async function salvarConfigForm(ev) {
 /* ============================================================
  *  EVENTOS
  * ============================================================ */
+/* Ordem dos blocos: no celular, uma coluna; no computador, duas. Os blocos são movidos no próprio HTML
+ * (e não só reordenados pelo CSS), para o Tab e o leitor de tela seguirem a mesma ordem que se vê na tela. */
+const TELA_LARGA = window.matchMedia('(min-width: 1024px)');
+function organizarLayout() {
+  const cols = $$('#v-inicio .inicio-col');
+  const bloco = n => $(`#v-inicio .inicio-grid .o${n}`);
+  if (TELA_LARGA.matches) {
+    [1, 2, 4, 5, 6, 7, 9].forEach(n => cols[0].appendChild(bloco(n)));
+    [3, 8, 10].forEach(n => cols[1].appendChild(bloco(n)));
+    $('.ext-lateral').appendChild($('#e-filtros'));
+  } else {
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(n => cols[0].appendChild(bloco(n)));
+    $('.ext-principal').insertBefore($('#e-filtros'), $('.ext-resto'));
+  }
+}
+
 function ligarEventos() {
+  organizarLayout();
+  if (TELA_LARGA.addEventListener) TELA_LARGA.addEventListener('change', organizarLayout); else TELA_LARGA.addListener(organizarLayout);
   $('#form-login').addEventListener('submit', fazerLogin);
   $('#form-troca').addEventListener('submit', salvarTroca);
   $('#t-cancelar').addEventListener('click', () => mostrarTela('app'));
@@ -3120,6 +3263,9 @@ function ligarEventos() {
   });
   $('#pj-anual').addEventListener('change', () => { PROJ.anualizar = $('#pj-anual').checked; renderProjecoes(); });
   $('#pj-todos').addEventListener('change', () => { PROJ.todosEventos = $('#pj-todos').checked; renderProjecoes(); });
+
+  // Tabelas dentro de "Ver tabela" só têm largura depois de abertas
+  document.addEventListener('toggle', ev => { if (ev.target.open) ajustarTabelas(ev.target); }, true);
 
   // Relatórios
   $$('#rel-secoes button').forEach(b => b.addEventListener('click', () => {
@@ -3176,6 +3322,18 @@ function ligarEventos() {
     if (ev.target.id === 'modal' || ev.target.closest('[data-fechar]')) fecharModal();
   });
   $('#visor-fechar').addEventListener('click', fecharVisor);
+  // Tab dá a volta dentro da janela aberta (do último controle volta ao primeiro, e vice-versa)
+  document.addEventListener('keydown', ev => {
+    if (ev.key !== 'Tab') return;
+    const camada = !$('#visor').hidden ? $('#visor') : !$('#modal').hidden ? $('#modal-corpo') : null;
+    if (!camada) return;
+    const focaveis = $$('a[href], button:not([disabled]), input:not([disabled]):not([hidden]), select:not([disabled]), textarea:not([disabled]), [tabindex="0"]', camada)
+      .filter(el => el.offsetParent !== null || el === document.activeElement);
+    if (!focaveis.length) { ev.preventDefault(); return; }
+    const primeiro = focaveis[0], ultimo = focaveis[focaveis.length - 1], atual = document.activeElement;
+    if (ev.shiftKey && (atual === primeiro || !camada.contains(atual) || atual === camada)) { ev.preventDefault(); ultimo.focus(); }
+    else if (!ev.shiftKey && (atual === ultimo || !camada.contains(atual))) { ev.preventDefault(); primeiro.focus(); }
+  });
   document.addEventListener('keydown', ev => {
     if (ev.key !== 'Escape') return;
     if (!$('#visor').hidden) fecharVisor();
