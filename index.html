@@ -1382,8 +1382,60 @@
 #mod-equipes .eq-lista-int .eq-g { flex: none; }
 #mod-equipes .eq-coord-form { display: grid; grid-template-columns: minmax(0, 1fr) 110px auto; gap: 10px; align-items: end; margin: 0 0 12px; }
 @media (max-width: 520px) { #mod-equipes .eq-coord-form { grid-template-columns: minmax(0, 1fr) 96px; } #mod-equipes .eq-coord-form .eq-btn { grid-column: 1 / -1; } }
-#mod-equipes .eq-lista-int .eq-g { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 800; background: #e3eefb; color: var(--menino); }
-#mod-equipes .eq-lista-int .eq-g.menina { background: #fbe6f0; color: var(--menina); }
+/* Painel de pessoas: edição direto na linha */
+#mod-equipes #eq-pessoas-bloco { margin-bottom: 16px; }
+#mod-equipes .eq-pessoas-ferr { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin: 0 0 12px; }
+#mod-equipes .eq-pessoas-ferr > select { flex: 0 1 220px; }
+#mod-equipes .eq-ref { display: grid; gap: 4px; flex: 0 1 300px; margin-left: auto; }
+#mod-equipes .eq-ref span { font-size: 12px; font-weight: 800; color: var(--muted); }
+#mod-equipes .eq-ptab { display: grid; }
+#mod-equipes .eq-pl { display: grid; grid-template-columns: minmax(180px, 2fr) 96px minmax(160px, 1.6fr) minmax(90px, 1fr) 150px; gap: 10px; align-items: center; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+#mod-equipes .eq-pl-cab { font-size: 12px; font-weight: 800; color: var(--muted); padding: 0 4px 8px; }
+#mod-equipes .eq-campo.eq-inline { border-color: transparent; background: transparent; font-weight: 700; min-height: 40px; padding: 6px 8px; }
+@media (hover: hover) and (pointer: fine) { #mod-equipes .eq-campo.eq-inline:hover { border-color: var(--line-2); background: #fff; } }
+#mod-equipes .eq-campo.eq-inline:focus { border-color: var(--royal); background: #fff; }
+#mod-equipes .eq-mini-seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; background: #fff; }
+#mod-equipes .eq-mini-seg button { border: 0; background: none; min-width: 44px; min-height: 40px; font-weight: 800; font-size: 19px; line-height: 1; color: var(--muted); padding: 0 8px; }
+#mod-equipes .eq-mini-seg button + button { border-left: 1px solid var(--line-2); }
+#mod-equipes .eq-mini-seg button.m[aria-pressed="true"] { background: var(--menino); color: #fff; }
+#mod-equipes .eq-mini-seg button.f[aria-pressed="true"] { background: var(--menina); color: #fff; }
+#mod-equipes .eq-mini-seg.largo button { font-size: 14px; padding: 0 12px; }
+#mod-equipes .eq-sit { display: inline-block; font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: #eef0f7; color: var(--muted); overflow-wrap: anywhere; }
+#mod-equipes .eq-sit.eq { background: #e6f4ea; color: #17502c; }
+#mod-equipes .eq-sit.coord { background: #e6e7fc; color: var(--royal); }
+#mod-equipes .eq-sit.cons { background: #fff4d1; color: #6b4a00; }
+#mod-equipes .eq-sit.fora { background: #fdecea; color: #a1281f; }
+#mod-equipes .eq-pl-coord { display: flex; flex-wrap: wrap; gap: 4px; }
+#mod-equipes .eq-ano-p { font-size: 12px; font-weight: 800; border: 1px solid var(--line-2); border-radius: 999px; padding: 1px 8px; background: #fff; }
+#mod-equipes .eq-traco { color: var(--muted); }
+#mod-equipes .eq-pl-acao { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+#mod-equipes .eq-pl-status { font-size: 12px; font-weight: 700; color: var(--muted); }
+#mod-equipes .eq-pl-status.ok { color: #1d6b3f; }
+#mod-equipes .eq-pl-erro { grid-column: 1 / -1; margin: 0; color: #a1281f; font-size: 13px; font-weight: 700; }
+#mod-equipes .eq-so-leitor { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* Cadastrar várias pessoas */
+#mod-equipes .eq-cv-cab, #mod-equipes .eq-cv-linha { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto 40px; gap: 8px; align-items: center; }
+#mod-equipes .eq-cv-cab { font-size: 12px; font-weight: 800; color: var(--muted); margin-bottom: -6px; }
+#mod-equipes .eq-cv-linhas { display: grid; gap: 6px; max-height: 52vh; overflow-y: auto; padding: 2px; }
+#mod-equipes .eq-cv-n { font-size: 12.5px; font-weight: 800; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+#mod-equipes .eq-cv-linha.com-erro .eq-campo { border-color: #d9534f; }
+#mod-equipes .eq-cv-erro { grid-column: 2 / -1; margin: -2px 0 2px; color: #a1281f; font-size: 12.5px; font-weight: 700; }
+#mod-equipes .eq-cv-mais { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+#mod-equipes .eq-link { border: 0; background: none; color: var(--royal); font-weight: 800; padding: 6px 2px; cursor: pointer; }
+@media (max-width: 900px) {
+  #mod-equipes .eq-pl-cab { display: none; }
+  #mod-equipes .eq-pl { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "nome g" "sit sit" "coord acao"; gap: 6px 8px; padding: 10px 2px; }
+  #mod-equipes .eq-pl-nome { grid-area: nome; } #mod-equipes .eq-pl-g { grid-area: g; } #mod-equipes .eq-pl-sit { grid-area: sit; } #mod-equipes .eq-pl-coord { grid-area: coord; } #mod-equipes .eq-pl-acao { grid-area: acao; }
+  #mod-equipes .eq-ref { margin-left: 0; flex: 1 1 100%; }
+  #mod-equipes .eq-traco { display: none; }
+  #mod-equipes .eq-pessoas-ferr > select { flex: 1 1 160px; }
+}
+@media (max-width: 560px) {
+  #mod-equipes .eq-cv-cab { display: none; }
+  #mod-equipes .eq-cv-linha { grid-template-columns: 22px minmax(0, 1fr) 40px; grid-template-areas: "n nome x" ". g g"; }
+  #mod-equipes .eq-cv-linha .eq-cv-n { grid-area: n; } #mod-equipes .eq-cv-linha [data-cv-nome] { grid-area: nome; } #mod-equipes .eq-cv-linha .eq-mini-seg { grid-area: g; justify-self: start; } #mod-equipes .eq-cv-linha [data-cv-x] { grid-area: x; }
+  #mod-equipes .eq-cv-linha .eq-mini-seg.largo button { font-size: 13px; padding: 0 10px; }
+}
 
 </style>
 </head>
@@ -1949,17 +2001,31 @@
     </section>
 
     <section id="eq-pag-importar" hidden aria-labelledby="eq-titulo">
+      <section class="eq-bloco" aria-labelledby="eq-h-pessoas" id="eq-pessoas-bloco">
+        <div class="eq-bloco-cab">
+          <div class="eq-tit"><span id="eq-ico-pessoas"></span><div><h2 id="eq-h-pessoas">Pessoas cadastradas <span class="eq-cont-badge" id="eq-n-pessoas">0</span></h2><p id="eq-pessoas-sub">Toque no nome ou em menino/menina para corrigir. Salva sozinho.</p></div></div>
+          <button type="button" class="eq-btn pri" id="eq-cad-varias"></button>
+        </div>
+        <div class="eq-pessoas-ferr">
+          <label class="eq-busca"><span id="eq-ico-busca3"></span><input class="eq-campo" id="eq-busca-pessoas" type="search" placeholder="Buscar por nome…" aria-label="Buscar pessoa por nome" maxlength="60"></label>
+          <select class="eq-campo" id="eq-filtro-pessoas" aria-label="Filtrar pessoas">
+            <option value="">Todas</option><option value="sem">Sem equipe</option><option value="com">Em alguma equipe</option>
+            <option value="Coordenador">Coordenadores</option><option value="Conselheiro">Conselheiros</option><option value="ja">Já coordenaram antes</option>
+          </select>
+          <label class="eq-ref"><span>Situação na montagem</span><select class="eq-campo" id="eq-ref-pessoas" aria-label="Montagem usada para mostrar a situação"></select></label>
+        </div>
+        <div id="eq-pessoas"></div>
+      </section>
       <div class="eq-imp-grid">
         <section class="eq-bloco" aria-labelledby="eq-h-imp-int">
-          <div class="eq-bloco-cab"><div class="eq-tit"><span id="eq-ico-imp1"></span><div><h2 id="eq-h-imp-int">Integrantes ativos</h2><p id="eq-imp-int-info"></p></div></div></div>
-          <p class="eq-ajuda" style="margin:0 0 12px">Cadastre uma pessoa de cada vez ou importe uma planilha com as colunas <b>Nome</b>, <b>Equipe</b> (opcional) e <b>Menino/menina</b>. Na importação, quem não estiver no arquivo deixa de ser ativo; o histórico e as montagens finalizadas não mudam. O arquivo é lido aqui mesmo e não fica guardado.</p>
+          <div class="eq-bloco-cab"><div class="eq-tit"><span id="eq-ico-imp1"></span><div>
+          <h2 id="eq-h-imp-int">Importar integrantes</h2><p id="eq-imp-int-info"></p></div></div></div>
+          <p class="eq-ajuda" style="margin:0 0 12px">Para trazer a lista inteira de uma vez: planilha com as colunas <b>Nome</b>, <b>Equipe</b> (opcional) e <b>Menino/menina</b>. Quem não estiver no arquivo deixa de ser ativo; o histórico e as montagens finalizadas não mudam. O arquivo é lido aqui mesmo e não fica guardado.</p>
           <div class="eq-imp-acoes">
-            <button type="button" class="eq-btn pri" id="eq-cad-avulso"></button>
             <button type="button" class="eq-btn" id="eq-modelo-int"></button>
             <label class="eq-btn eq-arquivo"><span id="eq-txt-arq-int">Escolher arquivo</span><input type="file" id="eq-arq-int" accept=".xlsx,.xls,.csv,text/csv" aria-label="Arquivo de integrantes (.xlsx ou .csv)"></label>
           </div>
           <div id="eq-previa-int"></div>
-          <div id="eq-lista-int"></div>
         </section>
         <section class="eq-bloco" aria-labelledby="eq-h-imp-coord">
           <div class="eq-bloco-cab"><div class="eq-tit"><span id="eq-ico-imp2"></span><div><h2 id="eq-h-imp-coord">Histórico de coordenadores</h2><p id="eq-imp-coord-info"></p></div></div></div>
@@ -5806,7 +5872,7 @@ const Equipes = (function (APP) {
 
 const S = {
   pagina: 'distribuicao', dados: null, montagemId: null, M: null, pessoas: [], equipes: [], versao: 0, leitura: false,
-  busca: '', coord: [], coordPorNome: {}, coordBusca: '', coordAno: '', desfazer: [], previaInt: null, previaCoord: null, iniciado: false, listaInt: null, buscaInt: ''
+  busca: '', coord: [], coordPorNome: {}, coordBusca: '', coordAno: '', desfazer: [], previaInt: null, previaCoord: null, iniciado: false, painel: null, painelRef: '', buscaPessoas: '', filtroPessoas: ''
 };
 const PRESENCAS = [['Presente', 'Presente'], ['Parcial', 'Parcialmente presente'], ['Ausente', 'Ausente']];
 const NOME_PRES = { '': 'Sem classificação', Presente: 'Presente', Parcial: 'Parcialmente presente', Ausente: 'Ausente' };
@@ -5918,12 +5984,13 @@ function montarNavegacao() {
   $('eq-ico-nd').innerHTML = IC.grupo; $('eq-ico-pres').innerHTML = IC.check; $('eq-ico-times').innerHTML = IC.grupo;
   $('eq-ico-busca').innerHTML = IC.busca; $('eq-ico-busca2').innerHTML = IC.busca; $('eq-ico-hist').innerHTML = IC.coordenadores;
   $('eq-ico-imp1').innerHTML = IC.grupo; $('eq-ico-imp2').innerHTML = IC.coordenadores;
-  $('eq-cadastrar').innerHTML = IC.mais + 'Cadastrar pessoa';
+  $('eq-cadastrar').innerHTML = IC.mais + 'Cadastrar pessoas';
   $('eq-salvar').innerHTML = IC.salvar + 'Salvar rascunho';
   $('eq-finalizar').innerHTML = IC.check + 'Finalizar montagem';
   $('eq-reabrir').innerHTML = IC.reabrir + 'Reabrir como nova versão';
   $('eq-modelo-int').innerHTML = IC.baixar + 'Baixar modelo';
-  $('eq-cad-avulso').innerHTML = IC.mais + 'Cadastrar pessoa';
+  $('eq-cad-varias').innerHTML = IC.mais + 'Cadastrar pessoas';
+  $('eq-ico-pessoas').innerHTML = IC.grupo; $('eq-ico-busca3').innerHTML = IC.busca;
   $('eq-modelo-coord').innerHTML = IC.baixar + 'Baixar modelo';
   $('eq-ir-importar-coord').innerHTML = IC.mais + 'Adicionar ou importar';
 }
@@ -5959,6 +6026,7 @@ function abrirMontagem(id) {
   });
 }
 function recarregarTudo(preferida) {
+  S.painel = null;
   return Promise.all([carregarResumo(), carregarCoord()]).then(function () {
     const ms = S.dados.montagens;
     let salvo = null; try { salvo = localStorage.getItem('eq_montagem'); } catch (e) { }
@@ -6107,11 +6175,11 @@ function renderDistribuicao() {
       (semEq ? '<span>Primeiro cadastre as equipes no módulo Calendário (passo 1 · Cadastro).</span>'
         : '<span>' + (semLista ? 'Nenhum integrante cadastrado ainda. Dá para cadastrar uma pessoa de cada vez, importar uma planilha ou começar a montagem e cadastrar as pessoas nela.' : plural(S.dados.ativos, 'integrante ativo', 'integrantes ativos') + ' e ' + plural(S.dados.equipesCalendario, 'equipe', 'equipes') + ' no Calendário.') + '</span>' +
           '<div class="eq-imp-acoes" style="justify-content:center"><button type="button" class="eq-btn pri" id="eq-comecar">' + IC.mais + 'Começar a montagem</button>' +
-          '<button type="button" class="eq-btn" id="eq-ini-cad">' + IC.pessoa + 'Cadastrar pessoa</button>' +
+          '<button type="button" class="eq-btn" id="eq-ini-cad">' + IC.pessoa + 'Cadastrar pessoas</button>' +
           '<button type="button" class="eq-btn" id="eq-ir-imp">' + IC.importar + 'Importar integrantes</button></div>') +
       '</div></section>';
     if ($('eq-ir-imp')) $('eq-ir-imp').onclick = function () { irPara('importar'); };
-    if ($('eq-ini-cad')) $('eq-ini-cad').onclick = function () { cadastrarPessoa(); };
+    if ($('eq-ini-cad')) $('eq-ini-cad').onclick = function () { cadastrarVarias(); };
     if ($('eq-comecar')) $('eq-comecar').onclick = novaMontagem;
     return;
   }
@@ -6328,7 +6396,7 @@ function abrirEscolha(alvo) {
 function novaMontagem() {
   const ano = new Date().getFullYear();
   abrirModal('Nova montagem',
-    '<p style="margin:0">' + (S.dados.ativos ? 'Todos os ' + plural(S.dados.ativos, 'integrante ativo', 'integrantes ativos') + ' começam em “Não distribuídos”' : 'Ainda não há integrantes cadastrados: depois de começar, use “Cadastrar pessoa”') + ', e as equipes vêm do Calendário.</p>' +
+    '<p style="margin:0">' + (S.dados.ativos ? 'Todos os ' + plural(S.dados.ativos, 'integrante ativo', 'integrantes ativos') + ' começam em “Não distribuídos”' : 'Ainda não há integrantes cadastrados: depois de começar, use “Cadastrar pessoas”') + ', e as equipes vêm do Calendário.</p>' +
     '<div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:10px"><div><label class="eq-rot" for="eq-nm-ano">Ano</label><input class="eq-campo" id="eq-nm-ano" type="number" min="2000" max="2100" value="' + ano + '"></div>' +
     '<div><label class="eq-rot" for="eq-nm-nome">Nome</label><input class="eq-campo" id="eq-nm-nome" maxlength="60" placeholder="Montagem ' + ano + '"></div></div>',
     '<button type="button" class="eq-btn" id="eq-nm-voltar">Voltar</button><button type="button" class="eq-btn pri" id="eq-nm-ok">Começar</button>');
@@ -6337,7 +6405,7 @@ function novaMontagem() {
   $('eq-nm-ok').onclick = function () {
     const b = this; b.disabled = true;
     salvarAgora().then(function () { return api('criarMontagem', { ano: Number($('eq-nm-ano').value), nome: $('eq-nm-nome').value.trim() }); })
-      .then(function (id) { fecharModal(); return recarregarTudo(id); }).then(function () { toast(S.pessoas.length ? 'Montagem criada. Todos estão em Não distribuídos.' : 'Montagem criada. Cadastre as pessoas em “Cadastrar pessoa”.'); })
+      .then(function (id) { fecharModal(); return recarregarTudo(id); }).then(function () { toast(S.pessoas.length ? 'Montagem criada. Todos estão em Não distribuídos.' : 'Montagem criada. Cadastre as pessoas em “Cadastrar pessoas”.'); })
       .catch(function (e) { b.disabled = false; erro(e); });
   };
 }
@@ -6383,7 +6451,7 @@ function cadastrarPessoa(p) {
     const chamada = p ? api('editarIntegrante', p.id, { nome: nome, genero: g })
       : salvarAgora().then(function () { return api('adicionarIntegrante', { nome: nome, genero: g }, naMontagem ? S.montagemId : ''); });
     chamada.then(function () {
-      S.listaInt = null;
+      S.painel = null;
       if (continuar) {
         b.disabled = false; $('eq-cp-nome').value = ''; g = ''; marcar(); $('eq-cp-nome').focus();
         toast(nome + ' cadastrado.');
@@ -6397,40 +6465,209 @@ function cadastrarPessoa(p) {
   if ($('eq-cp-mais')) $('eq-cp-mais').onclick = function () { enviarPessoa(this, true); };
 }
 
-// Lista ativa na aba Cadastro e importação: corrigir ou tirar alguém sem precisar importar de novo
-function renderListaInt() {
-  const box = $('eq-lista-int');
-  if (!S.dados || !S.dados.ativos) { box.innerHTML = ''; return; }
-  if (!S.listaInt) {
-    box.innerHTML = '<p class="eq-ajuda">Carregando a lista…</p>';
-    api('listarIntegrantes').then(function (l) { S.listaInt = l; if (S.pagina === 'importar') renderListaInt(); }).catch(erro);
+// ---------------------------------------------------------------- painel de pessoas (sem precisar abrir montagem)
+function situacaoTexto(x, ref) {
+  if (!ref) return { txt: 'Nenhuma montagem ainda', cls: '' };
+  const a = x.alocacao;
+  if (!a) return { txt: 'Fora desta montagem', cls: 'fora' };
+  if (a.equipeId) return { txt: a.equipe + (a.funcao && a.funcao !== 'Integrante' ? ' · ' + a.funcao : ''), cls: a.funcao === 'Coordenador' ? 'coord' : a.funcao === 'Conselheiro' ? 'cons' : 'eq', funcao: a.funcao };
+  return { txt: a.presenca ? NOME_PRES[a.presenca] + ', sem equipe' : 'Não distribuído', cls: 'sem' };
+}
+function renderPessoas() {
+  const box = $('eq-pessoas');
+  if (!S.painel) {
+    box.innerHTML = '<p class="eq-ajuda">Carregando…</p>';
+    api('painelIntegrantes', S.painelRef || '').then(function (r) { S.painel = r; if (S.pagina === 'importar') renderPessoas(); }).catch(erro);
     return;
   }
-  const b = norm(S.buscaInt);
-  const vis = S.listaInt.filter(function (x) { return !b || norm(x.nome).indexOf(b) >= 0; });
-  const aberta = box.querySelector('details') ? box.querySelector('details').open : false;
-  box.innerHTML = '<details class="eq-det"' + (aberta || b ? ' open' : '') + '><summary>Ver a lista ativa (' + S.listaInt.length + ')</summary>' +
-    '<label class="eq-busca" style="margin:8px 0"><span>' + IC.busca + '</span><input class="eq-campo" id="eq-busca-int" type="search" placeholder="Buscar por nome…" aria-label="Buscar na lista de integrantes" maxlength="60" value="' + esc(S.buscaInt) + '"></label>' +
-    (vis.length ? '<ul class="eq-lista-int">' + vis.map(function (x) {
-      return '<li><span class="eq-g ' + (x.genero === 'Menina' ? 'menina' : 'menino') + '" aria-hidden="true">' + (x.genero === 'Menina' ? '♀' : '♂') + '</span><span class="eq-li-nome">' + esc(x.nome) + (x.equipe ? '<small>' + esc(x.equipe) + '</small>' : '') + '</span>' +
-        '<button type="button" class="eq-btn peq" data-eq-ed="' + esc(x.id) + '" aria-label="Corrigir ' + esc(x.nome) + '">Corrigir</button>' +
-        '<button type="button" class="eq-btn peq perigo" data-eq-rm="' + esc(x.id) + '" aria-label="Tirar ' + esc(x.nome) + ' da lista">Tirar</button></li>';
-    }).join('') + '</ul>' : '<p class="eq-ajuda">Ninguém com esse nome.</p>') + '</details>';
-  const busca = $('eq-busca-int');
-  busca.oninput = function () { S.buscaInt = this.value; renderListaInt(); const i = $('eq-busca-int'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); };
-  box.querySelectorAll('[data-eq-ed]').forEach(function (x) {
-    x.onclick = function () { cadastrarPessoa(S.listaInt.find(function (y) { return y.id === x.dataset.eqEd; })); };
+  const P = S.painel, ref = P.referencia;
+  $('eq-n-pessoas').textContent = P.pessoas.length;
+  $('eq-ref-pessoas').innerHTML = P.montagens.length ? P.montagens.map(function (m) { return '<option value="' + esc(m.id) + '"' + (ref && ref.id === m.id ? ' selected' : '') + '>' + esc(m.ano + ' · ' + m.nome + (m.estado === 'Finalizada' ? ' (finalizada)' : ' (rascunho)')) + '</option>'; }).join('') : '<option value="">Nenhuma montagem ainda</option>';
+  $('eq-ref-pessoas').disabled = !P.montagens.length;
+  const b = norm(S.buscaPessoas), f = S.filtroPessoas;
+  const vis = P.pessoas.filter(function (x) {
+    if (b && norm(x.nome).indexOf(b) < 0) return false;
+    const a = x.alocacao;
+    if (f === 'sem') return !a || !a.equipeId;
+    if (f === 'com') return a && a.equipeId;
+    if (f === 'Coordenador' || f === 'Conselheiro') return a && a.funcao === f;
+    if (f === 'ja') return x.coordenou.length > 0;
+    return true;
   });
-  box.querySelectorAll('[data-eq-rm]').forEach(function (x) {
-    x.onclick = function () {
-      const pz = S.listaInt.find(function (y) { return y.id === x.dataset.eqRm; });
-      confirmar('Tirar da lista', pz.nome + ' deixa de ser integrante ativo. O histórico e as montagens finalizadas não mudam; nos rascunhos, aparece como “saiu da lista” para você decidir.', 'Tirar da lista', true).then(function (sim) {
+  if (!P.pessoas.length) { box.innerHTML = '<div class="eq-vazio">' + IC.grupo + '<b style="color:var(--ink)">Ninguém cadastrado ainda</b><span>Use “Cadastrar pessoas” ou importe uma planilha.</span></div>'; return; }
+  if (!vis.length) { box.innerHTML = '<p class="eq-ajuda" style="text-align:center;padding:16px">Ninguém com esse filtro.</p>'; return; }
+  const linha = function (x) {
+    const st = situacaoTexto(x, ref);
+    const g = x.genero === 'Menina' ? 'Menina' : 'Menino';
+    return '<div class="eq-pl" role="row" data-eq-pl="' + esc(x.id) + '">' +
+      '<div class="eq-pl-nome" role="cell"><input class="eq-campo eq-inline" value="' + esc(x.nome) + '" maxlength="80" aria-label="Nome de ' + esc(x.nome) + '" data-eq-nome></div>' +
+      '<div class="eq-pl-g" role="cell"><div class="eq-mini-seg" role="group" aria-label="Menino ou menina">' +
+        '<button type="button" class="m" data-eq-gen="Menino" aria-pressed="' + (g === 'Menino') + '" aria-label="Menino">♂</button><button type="button" class="f" data-eq-gen="Menina" aria-pressed="' + (g === 'Menina') + '" aria-label="Menina">♀</button></div></div>' +
+      '<div class="eq-pl-sit" role="cell"><span class="eq-sit ' + st.cls + '">' + esc(st.txt) + '</span></div>' +
+      '<div class="eq-pl-coord" role="cell">' + (x.coordenou.length ? x.coordenou.map(function (a) { return '<span class="eq-ano-p">' + a + '</span>'; }).join('') : '<span class="eq-traco">—</span>') + '</div>' +
+      '<div class="eq-pl-acao" role="cell"><span class="eq-pl-status" aria-live="polite"></span><button type="button" class="eq-btn peq perigo" data-eq-rm aria-label="Tirar ' + esc(x.nome) + ' da lista">Tirar</button></div>' +
+      '<p class="eq-pl-erro" hidden></p></div>';
+  };
+  box.innerHTML = '<div class="eq-ptab" role="table" aria-label="Pessoas cadastradas"><div class="eq-pl eq-pl-cab" role="row"><span role="columnheader">Nome</span><span role="columnheader">Menino/menina</span><span role="columnheader">Situação' + (ref ? ' em ' + esc(ref.nome) : '') + '</span><span role="columnheader">Coordenou</span><span role="columnheader"><span class="eq-so-leitor">Ações</span></span></div>' +
+    vis.map(linha).join('') + '</div>';
+  box.querySelectorAll('[data-eq-pl]').forEach(function (row) {
+    const id = row.dataset.eqPl, x = P.pessoas.find(function (y) { return y.id === id; });
+    const inp = row.querySelector('[data-eq-nome]');
+    inp.onkeydown = function (k) { if (k.key === 'Enter') { k.preventDefault(); inp.blur(); } if (k.key === 'Escape') { inp.value = x.nome; inp.blur(); } };
+    inp.onchange = function () { salvarPessoaInline(row, x, { nome: inp.value.trim(), genero: x.genero }); };
+    row.querySelectorAll('[data-eq-gen]').forEach(function (bt) {
+      bt.onclick = function () { if (bt.dataset.eqGen !== x.genero) salvarPessoaInline(row, x, { nome: x.nome, genero: bt.dataset.eqGen }); };
+    });
+    row.querySelector('[data-eq-rm]').onclick = function () {
+      const a = x.alocacao;
+      confirmar('Tirar da lista', x.nome + ' deixa de ser integrante ativo.' + (a && a.equipeId ? ' Hoje está em ' + a.equipe + (a.funcao ? ' (' + a.funcao.toLowerCase() + ')' : '') + '.' : '') + ' O histórico e as montagens finalizadas não mudam; nos rascunhos, aparece como “saiu da lista” para você decidir.', 'Tirar da lista', true).then(function (sim) {
         if (!sim) return;
-        return salvarAgora().then(function () { return api('removerIntegrante', pz.id); }).then(function () { S.listaInt = null; return recarregarTudo(S.montagemId); })
-          .then(function () { toast(pz.nome + ' saiu da lista de integrantes.'); });
+        return salvarAgora().then(function () { return api('removerIntegrante', x.id); }).then(function () { return recarregarTudo(S.montagemId); })
+          .then(function () { toast(x.nome + ' saiu da lista de integrantes.'); });
       }).catch(erro);
     };
   });
+}
+function salvarPessoaInline(row, x, d) {
+  const st = row.querySelector('.eq-pl-status'), er = row.querySelector('.eq-pl-erro'), inp = row.querySelector('[data-eq-nome]');
+  er.hidden = true;
+  if (!d.nome) { inp.value = x.nome; er.textContent = 'O nome não pode ficar vazio.'; er.hidden = false; return; }
+  if (d.nome === x.nome && d.genero === x.genero) return;
+  st.textContent = 'Salvando…'; st.className = 'eq-pl-status';
+  api('editarIntegrante', x.id, d).then(function () {
+    x.nome = d.nome; x.genero = d.genero;
+    const p = pessoa(x.id); if (p) { p.nome = d.nome; p.genero = d.genero; }
+    row.querySelectorAll('[data-eq-gen]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.eqGen === d.genero); });
+    inp.setAttribute('aria-label', 'Nome de ' + d.nome);
+    st.textContent = 'Salvo'; st.className = 'eq-pl-status ok';
+    setTimeout(function () { if (st.textContent === 'Salvo') st.textContent = ''; }, 2500);
+  }).catch(function (e) {
+    inp.value = x.nome; st.textContent = '';
+    row.querySelectorAll('[data-eq-gen]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.eqGen === x.genero); });
+    if (e.tratado) return;
+    er.textContent = e.message; er.hidden = false;
+  });
+}
+
+// ---------------------------------------------------------------- cadastrar várias pessoas de uma vez
+// Uma linha por pessoa; Enter vai para a próxima linha (cria se precisar). Colar uma lista de nomes cria as linhas.
+function cadastrarVarias(inicial) {
+  const naMontagem = S.M && !S.leitura && S.montagemId;
+  let linhas = inicial && inicial.length ? inicial : [{ nome: '', genero: '' }];
+  abrirModal('Cadastrar pessoas',
+    '<p class="eq-ajuda" style="margin:0">Uma pessoa por linha. <b>Enter</b> vai para a linha de baixo. Dá para colar uma lista de nomes (um por linha; se vier “;Menina” ou “;Menino” depois do nome, já marca).' +
+      (naMontagem ? ' As pessoas entram também nesta montagem, em “Não distribuídos”.' : '') + '</p>' +
+    '<div class="eq-cv-cab" aria-hidden="true"><span>#</span><span>Nome</span><span>Menino ou menina</span><span></span></div>' +
+    '<div class="eq-cv-linhas" id="eq-cv-linhas"></div>' +
+    '<div class="eq-cv-mais"><button type="button" class="eq-btn" id="eq-cv-add">' + IC.mais + 'Adicionar linha</button>' +
+    '<span class="eq-ajuda" style="margin:0">Marcar todos sem marcação como: <button type="button" class="eq-link" id="eq-cv-todos-m">♂ menino</button> · <button type="button" class="eq-link" id="eq-cv-todos-f">♀ menina</button></span></div>' +
+    '<p class="eq-erro-caixa" id="eq-cv-erro" hidden></p>',
+    '<button type="button" class="eq-btn" id="eq-cv-voltar">Voltar</button><button type="button" class="eq-btn pri" id="eq-cv-ok">Cadastrar</button>', true);
+  const box = $('eq-cv-linhas');
+  function preenchidas() { return linhas.filter(function (l) { return l.nome.trim() || l.genero; }).length; }
+  function rotuloBotao() { const n = preenchidas(); $('eq-cv-ok').textContent = n ? 'Cadastrar ' + plural(n, 'pessoa', 'pessoas') : 'Cadastrar'; }
+  function linhaHtml(l, i) {
+    return '<div class="eq-cv-linha" data-i="' + i + '"><span class="eq-cv-n" aria-hidden="true">' + (i + 1) + '</span>' +
+      '<input class="eq-campo" data-cv-nome maxlength="80" autocomplete="off" aria-label="Nome da pessoa ' + (i + 1) + '" value="' + esc(l.nome) + '">' +
+      '<div class="eq-mini-seg largo" role="group" aria-label="Menino ou menina, pessoa ' + (i + 1) + '"><button type="button" class="m" data-cv-g="Menino" aria-pressed="' + (l.genero === 'Menino') + '">♂ Menino</button><button type="button" class="f" data-cv-g="Menina" aria-pressed="' + (l.genero === 'Menina') + '">♀ Menina</button></div>' +
+      '<button type="button" class="eq-fechar" data-cv-x aria-label="Remover a linha ' + (i + 1) + '">' + IC.x + '</button>' +
+      '<p class="eq-cv-erro" hidden></p></div>';
+  }
+  function desenhar(foco) {
+    box.innerHTML = linhas.map(linhaHtml).join('');
+    box.querySelectorAll('.eq-cv-linha').forEach(function (row) {
+      const i = Number(row.dataset.i), inp = row.querySelector('[data-cv-nome]');
+      inp.oninput = function () {
+        linhas[i].nome = inp.value; rotuloBotao();
+        row.querySelector('.eq-cv-erro').hidden = true; row.classList.remove('com-erro'); $('eq-cv-erro').hidden = true;
+        if (i === linhas.length - 1 && inp.value.trim()) { linhas.push({ nome: '', genero: '' }); acrescentarLinha(); }
+      };
+      inp.onkeydown = function (k) {
+        if (k.key === 'Enter') { k.preventDefault(); if (i === linhas.length - 1) { linhas.push({ nome: '', genero: '' }); acrescentarLinha(); } focar(i + 1); }
+        if (k.key === 'ArrowDown' && i < linhas.length - 1) { k.preventDefault(); focar(i + 1); }
+        if (k.key === 'ArrowUp' && i > 0) { k.preventDefault(); focar(i - 1); }
+      };
+      inp.onpaste = function (ev) {
+        const txt = (ev.clipboardData || window.clipboardData).getData('text') || '';
+        if (txt.indexOf('\n') < 0 && !/[;\t]/.test(txt)) return;
+        ev.preventDefault();
+        const novas = txt.split(/\r?\n/).map(function (t) { return t.trim(); }).filter(Boolean).map(function (t) {
+          const partes = t.split(/\t|;/).map(function (x) { return x.trim(); });
+          const gTxt = norm(partes[partes.length - 1] || '');
+          const g = partes.length > 1 && /^(menina|f|feminino)$/.test(gTxt) ? 'Menina' : partes.length > 1 && /^(menino|m|masculino)$/.test(gTxt) ? 'Menino' : '';
+          return { nome: (g ? partes.slice(0, -1) : partes).filter(Boolean)[0] || '', genero: g };
+        }).filter(function (l) { return l.nome; });
+        if (!novas.length) return;
+        const antes = linhas.slice(0, i).concat(linhas[i].nome.trim() ? [linhas[i]] : []);
+        const depois = linhas.slice(i + 1).filter(function (l) { return l.nome.trim() || l.genero; });
+        linhas = antes.concat(novas, depois, [{ nome: '', genero: '' }]);
+        desenhar(antes.length + novas.length); rotuloBotao();
+        toast(plural(novas.length, 'nome colado', 'nomes colados') + '.');
+      };
+      row.querySelectorAll('[data-cv-g]').forEach(function (b) {
+        b.onclick = function () {
+          linhas[i].genero = b.dataset.cvG; row.querySelectorAll('[data-cv-g]').forEach(function (x) { x.setAttribute('aria-pressed', x.dataset.cvG === linhas[i].genero); });
+          row.querySelector('.eq-cv-erro').hidden = true; row.classList.remove('com-erro'); $('eq-cv-erro').hidden = true; rotuloBotao();
+        };
+      });
+      row.querySelector('[data-cv-x]').onclick = function () {
+        linhas.splice(i, 1); if (!linhas.length) linhas.push({ nome: '', genero: '' });
+        desenhar(Math.min(i, linhas.length - 1)); rotuloBotao();
+      };
+    });
+    if (foco !== undefined) focar(foco);
+  }
+  function acrescentarLinha() { desenharMantendoFoco(); }
+  function desenharMantendoFoco() {
+    const a = document.activeElement, row = a && a.closest && a.closest('.eq-cv-linha');
+    const i = row ? Number(row.dataset.i) : null, pos = a && a.selectionStart;
+    desenhar();
+    if (i !== null) { const inp = box.querySelector('.eq-cv-linha[data-i="' + i + '"] [data-cv-nome]'); if (inp) { inp.focus(); try { inp.setSelectionRange(pos, pos); } catch (e) { } } }
+  }
+  function focar(i) { const inp = box.querySelector('.eq-cv-linha[data-i="' + i + '"] [data-cv-nome]'); if (inp) { inp.focus(); inp.scrollIntoView({ block: 'nearest' }); } }
+  function marcarTodos(g) { linhas.forEach(function (l) { if (l.nome.trim() && !l.genero) l.genero = g; }); desenhar(); rotuloBotao(); }
+  desenhar(Math.max(0, linhas.length - 1)); rotuloBotao();
+  $('eq-cv-add').onclick = function () { linhas.push({ nome: '', genero: '' }); desenhar(linhas.length - 1); };
+  $('eq-cv-todos-m').onclick = function () { marcarTodos('Menino'); };
+  $('eq-cv-todos-f').onclick = function () { marcarTodos('Menina'); };
+  $('eq-cv-voltar').onclick = function () {
+    if (!preenchidas()) { fecharModal(); return; }
+    confirmar('Descartar o que foi digitado?', plural(preenchidas(), 'pessoa preenchida ainda não foi cadastrada', 'pessoas preenchidas ainda não foram cadastradas') + '.', 'Descartar', true).then(function (sim) { if (!sim) cadastrarVarias(linhas); });
+  };
+  $('eq-cv-ok').onclick = function () {
+    const b = this, erroGeral = $('eq-cv-erro');
+    erroGeral.hidden = true;
+    box.querySelectorAll('.eq-cv-linha').forEach(function (r) { r.classList.remove('com-erro'); r.querySelector('.eq-cv-erro').hidden = true; });
+    // conferência aqui mesmo (o servidor confere de novo)
+    const vistos = {}, erros = [];
+    linhas.forEach(function (l, i) {
+      const nome = l.nome.trim(); if (!nome && !l.genero) return;
+      const pr = [];
+      if (!nome) pr.push('falta o nome');
+      if (!l.genero) pr.push('escolha menino ou menina');
+      const k = norm(nome);
+      if (nome && vistos[k] !== undefined) pr.push('nome repetido (linha ' + (vistos[k] + 1) + ')');
+      if (nome && vistos[k] === undefined) vistos[k] = i;
+      if (pr.length) erros.push({ indice: i, problema: pr.join('; ') });
+    });
+    const mostrarErros = function (lista) {
+      lista.forEach(function (e) {
+        const r = box.querySelector('.eq-cv-linha[data-i="' + e.indice + '"]'); if (!r) return;
+        r.classList.add('com-erro'); const p = r.querySelector('.eq-cv-erro'); p.textContent = e.problema; p.hidden = false;
+      });
+      erroGeral.textContent = plural(lista.length, 'linha precisa', 'linhas precisam') + ' de ajuste. Nada foi gravado ainda.'; erroGeral.hidden = false;
+      focar(lista[0].indice);
+    };
+    if (!preenchidas()) { erroGeral.textContent = 'Preencha pelo menos uma pessoa.'; erroGeral.hidden = false; focar(0); return; }
+    if (erros.length) { mostrarErros(erros); return; }
+    b.disabled = true; const txt = b.textContent; b.textContent = 'Cadastrando…';
+    salvarAgora().then(function () { return api('adicionarIntegrantes', linhas.map(function (l) { return { nome: l.nome, genero: l.genero }; }), naMontagem ? S.montagemId : ''); })
+      .then(function (r) {
+        if (r.erros && r.erros.length) { b.disabled = false; b.textContent = txt; mostrarErros(r.erros); return; }
+        fecharModal();
+        return recarregarTudo(S.montagemId).then(function () { toast(plural(r.salvos, 'pessoa cadastrada', 'pessoas cadastradas') + (naMontagem ? ' em Não distribuídos.' : ' na lista de integrantes.')); });
+      }).catch(function (e) { b.disabled = false; b.textContent = txt; if (!e.tratado) { erroGeral.textContent = e.message; erroGeral.hidden = false; } });
+  };
 }
 
 // Conferência antes de finalizar
@@ -6582,7 +6819,7 @@ function renderImportar() {
   const d = S.dados;
   $('eq-imp-int-info').textContent = plural(d.ativos, 'integrante ativo', 'integrantes ativos') + (d.versaoLista ? ' · lista nº ' + d.versaoLista : ' · nenhuma lista importada ainda');
   $('eq-imp-coord-info').textContent = plural(d.coordenadores, 'registro', 'registros') + ' no histórico';
-  renderPreviaInt(); renderPreviaCoord(); renderListaInt();
+  renderPreviaInt(); renderPreviaCoord(); renderPessoas();
 }
 function listaNomes(l, n) { return l.slice(0, n).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + (l.length > n ? '<li>e mais ' + (l.length - n) + '</li>' : ''); }
 function tabelaInvalidos(l) {
@@ -6612,7 +6849,7 @@ function renderPreviaInt() {
   if ($('eq-int-confirmar')) $('eq-int-confirmar').onclick = function () {
     const b = this; b.disabled = true;
     api('confirmarIntegrantes', P.linhas, r.versaoLista).then(function (x) {
-      S.previaInt = null; S.listaInt = null;
+      S.previaInt = null; S.painel = null;
       return recarregarTudo(S.montagemId).then(function () { toast('Lista nº ' + x.versao + ' importada: ' + x.ativos + ' ativos (' + x.entraram + ' entraram, ' + x.sairam + ' saíram).'); });
     }).catch(function (e) { b.disabled = false; erro(e); });
   };
@@ -6665,7 +6902,7 @@ function ligarFixos() {
   };
   $('eq-finalizar').onclick = abrirConferencia;
   $('eq-reabrir').onclick = reabrir;
-  $('eq-cadastrar').onclick = function () { cadastrarPessoa(); };
+  $('eq-cadastrar').onclick = function () { cadastrarVarias(); };
   $('eq-busca').oninput = function () { S.busca = this.value; renderDistribuicao(); };
   $('eq-coord-busca').oninput = function () { S.coordBusca = this.value; renderCoordenadores(); };
   $('eq-coord-ano').onchange = function () { S.coordAno = this.value; renderCoordenadores(); };
@@ -6674,7 +6911,10 @@ function ligarFixos() {
   $('eq-modelo-coord').onclick = function () { baixarModelo('coord'); };
   $('eq-arq-int').onchange = function () { escolherArquivo(this, 'int'); };
   $('eq-arq-coord').onchange = function () { escolherArquivo(this, 'coord'); };
-  $('eq-cad-avulso').onclick = function () { cadastrarPessoa(); };
+  $('eq-cad-varias').onclick = function () { cadastrarVarias(); };
+  $('eq-busca-pessoas').oninput = function () { S.buscaPessoas = this.value; renderPessoas(); };
+  $('eq-filtro-pessoas').onchange = function () { S.filtroPessoas = this.value; renderPessoas(); };
+  $('eq-ref-pessoas').onchange = function () { S.painelRef = this.value; S.painel = null; renderPessoas(); };
   $('eq-cm-form').onsubmit = function (ev) {
     ev.preventDefault();
     const nome = $('eq-cm-nome').value.trim(), ano = $('eq-cm-ano').value.trim(), b = $('eq-cm-ok');
